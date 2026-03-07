@@ -8,9 +8,20 @@ const Navbar = ({ theme = 'dark', toggleTheme }) => {
             <div className="container navbar-container">
                 <a href="/" className="logo">
                     <img src={logoImg} alt="LinkMyRide Logo" className="brand-logo-img" style={{ height: '40px', objectFit: 'contain' }} />
+                    <span className="text-accent" style={{ fontWeight: 'bold', marginLeft: '10px' }}>Link My Ride</span>
                 </a>
 
                 <div className="nav-links">
+                    <div className="dropdown">
+                        <button className="kebab-btn" aria-label="Shop by Category">
+                            &#8942; <span className="dropdown-label">Shop by Category</span>
+                        </button>
+                        <div className="dropdown-content">
+                            <a href="#catalog?category=communicators">Communicators</a>
+                            <a href="#catalog?category=dashcams">Dashcams</a>
+                            <a href="#catalog?category=accessories">Accessories</a>
+                        </div>
+                    </div>
                     <a href="#catalog">PRODUCTS</a>
                     <a href="#support">SUPPORT</a>
                     <a href="#community">COMMUNITY</a>

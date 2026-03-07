@@ -15,7 +15,7 @@ const Footer = () => {
                         Redefining the riding experience with cutting-edge technology and premium accessories. Designed for riders, verified worldwide.
                     </p>
                     <div className="social-links">
-                        <a href="https://www.facebook.com/LinkMyRide" target="_blank" rel="noopener noreferrer" aria-label="Facebook">FB</a>
+                        <a href="https://www.facebook.com/KatalineMotors?mibextid=wwXIfr&rdid=iktPgq7MH46O4Tas&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F14WhJTfE6FQ%2F%3Fmibextid%3DwwXIfr#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">FB</a>
                         <a href="#" aria-label="Twitter">TW</a>
                         <a href="#" aria-label="Instagram">IG</a>
                     </div>
