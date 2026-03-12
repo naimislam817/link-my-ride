@@ -4,7 +4,7 @@ import dashcamImg from '../assets/images/categories/dashcam-bg.jpg';
 import accessoriesImg from '../assets/images/categories/accessories-bg.jpg';
 import phoneBracketImg from '../assets/images/products/phone-bracket.jpg';
 import carChargerImg from '../assets/images/products/car-charger.jpg';
-import y10Img from '../assets/images/products/Y10.jpg';
+import y10Img from '../assets/images/products/y10.jpg';
 import d3xImg from '../assets/images/products/d3x.jpg';
 import carAshtrayImg from '../assets/images/products/car-ashtray.jpg';
 import dashcamProductImg from '../assets/images/products/car-dash.jpg';
