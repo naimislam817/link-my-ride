@@ -16,24 +16,26 @@ const ProductDetails = () => {
     const [formData, setFormData] = useState({ name: '', address: '', phone: '' });
 
     useEffect(() => {
-        const hash = window.location.hash;
-        if (hash.startsWith('#product/')) {
-            const id = hash.replace('#product/', '');
-            const foundProduct = getProductById(id);
-            if (foundProduct) {
-                setProduct(foundProduct);
-                
-                // Fetch related featured products
-                const categoryProducts = getProductsByCategory(foundProduct.category);
-                const related = categoryProducts.filter(p => p.id !== foundProduct.id && p.featured).slice(0, 4);
-                setRelatedProducts(related);
-
-                window.scrollTo(0, 0);
-                return;
+        const handleHashChange = () => {
+            const hash = window.location.hash;
+            if (hash.startsWith('#product/')) {
+                const id = hash.replace('#product/', '');
+                const foundProduct = getProductById(id);
+                if (foundProduct) {
+                    setProduct(foundProduct);
+                    
+                    // Fetch related featured products
+                    const categoryProducts = getProductsByCategory(foundProduct.category);
+                    const related = categoryProducts.filter(p => p.id !== foundProduct.id && (p.is_active || p.featured)).slice(0, 4);
+                    setRelatedProducts(related);
+                    window.scrollTo(0, 0);
+                }
             }
-        }
-        // Fallback
-        setProduct(products[0]);
+        };
+
+        handleHashChange();
+        window.addEventListener('hashchange', handleHashChange);
+        return () => window.removeEventListener('hashchange', handleHashChange);
     }, [products]);
 
     if (loading || !product) return <div className="container section-padding">Loading...</div>;
@@ -118,17 +120,17 @@ const ProductDetails = () => {
 
                     <div className="product-main-info">
                         <h1 className="product-title">
-                            {product.name.split(' ').map((word, i) => {
+                            {product.name ? product.name.split(' ').map((word, i) => {
                                 if (i === 1) return <span key={i} className="text-accent"> {word} </span>;
                                 return <em key={i}> {word} </em>;
-                            })}
+                            }) : 'Product Details'}
                         </h1>
                         <div className="product-rating">
                             <span className="stars">★★★★★</span>
                             <span className="rating-text">4.9 (248 Reviews)</span>
                         </div>
                         <p className="product-description">
-                            {product.desc}
+                            {product.description || product.desc}
                         </p>
 
                         <div className="product-features-grid">
@@ -148,8 +150,8 @@ const ProductDetails = () => {
                         <div className="price-header">
                             <span className="price-label">PRODUCT PRICE</span>
                             <div className="price-display">
-                                <span className="current-price">{product.price.toLocaleString()} TK</span>
-                                {product.oldPrice && <span className="old-price">{product.oldPrice.toLocaleString()} TK</span>}
+                                <span className="current-price">{product.price?.toLocaleString()} TK</span>
+                                {product.old_price && <span className="old-price">{product.old_price?.toLocaleString()} TK</span>}
                             </div>
                         </div>
 
