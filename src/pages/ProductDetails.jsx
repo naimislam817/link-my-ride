@@ -11,32 +11,31 @@ const ProductDetails = () => {
     const [product, setProduct] = useState(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [relatedProducts, setRelatedProducts] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Form states
     const [formData, setFormData] = useState({ name: '', address: '', phone: '' });
 
     useEffect(() => {
-        const handleHashChange = () => {
+        const loadProduct = () => {
             const hash = window.location.hash;
             if (hash.startsWith('#product/')) {
                 const id = hash.replace('#product/', '');
-                const foundProduct = getProductById(id);
+                const foundProduct = products.find(p => String(p.id) === String(id));
+                
                 if (foundProduct) {
                     setProduct(foundProduct);
-                    
-                    // Fetch related featured products
-                    const categoryProducts = getProductsByCategory(foundProduct.category);
-                    const related = categoryProducts.filter(p => p.id !== foundProduct.id && (p.is_active || p.featured)).slice(0, 4);
-                    setRelatedProducts(related);
+                    const rel = products.filter(p => String(p.id) !== String(id) && p.category === foundProduct.category).slice(0, 4);
+                    setRelatedProducts(rel);
                     window.scrollTo(0, 0);
                 }
             }
         };
 
-        handleHashChange();
-        window.addEventListener('hashchange', handleHashChange);
-        return () => window.removeEventListener('hashchange', handleHashChange);
-    }, [products]);
+        loadProduct();
+        window.addEventListener('hashchange', loadProduct);
+        return () => window.removeEventListener('hashchange', loadProduct);
+    }, [products, window.location.hash]);
 
     if (loading || !product) return <div className="container section-padding">Loading...</div>;
 

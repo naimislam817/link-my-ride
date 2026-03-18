@@ -54,7 +54,7 @@ const Catalog = () => {
                         </div>
                         <div className="product-info">
                             <h3 className="product-name" onClick={() => window.location.hash = `#product/${product.id}`} style={{ cursor: 'pointer' }}>{product.name}</h3>
-                            <p className="product-desc">{product.desc}</p>
+                            <p className="product-desc">{product.description || product.desc}</p>
                             <div className="product-footer">
                                 <span className="product-price">৳{product.price.toLocaleString()}</span>
                                 <a href={`#product/${product.id}`} className="cart-add-btn" aria-label="Add to cart">

@@ -22,7 +22,7 @@ const GadgetsSection = () => {
                         </div>
                         <div className="product-info">
                             <h3 className="product-name" onClick={() => window.location.hash = `#product/${product.id}`} style={{ cursor: 'pointer' }}>{product.name}</h3>
-                            <p className="product-desc">{product.desc}</p>
+                            <p className="product-desc">{product.description || product.desc}</p>
                             <div className="product-specs">
                                 {product.specs.map((spec, j) => (
                                     <span className="spec-tag" key={j}>{spec}</span>
