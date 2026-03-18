@@ -58,11 +58,12 @@ const AdminProducts = () => {
         const payload = {
             name: currentProduct.name,
             price: currentProduct.price,
+            old_price: currentProduct.old_price,
             image: currentProduct.image,
             category: currentProduct.category,
             description: currentProduct.description,
             is_active: currentProduct.is_active,
-            // badge is not in DB originally, we might need a migration or skip it.
+            badge: currentProduct.badge,
             specs: specsToSave,
             features: featuresToSave
         };
@@ -107,9 +108,19 @@ const AdminProducts = () => {
                             </select>
                         </div>
                     </div>
+                    <div style={{ display: 'flex', gap: '20px' }}>
+                        <div style={{ flex: 1 }}>
+                            <label>Image URL or Path</label>
+                            <input type="text" value={currentProduct.image || ''} onChange={e => setCurrentProduct({...currentProduct, image: e.target.value})} style={{ width: '100%', padding: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'white' }} />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <label>Badge (Optional - e.g. NEW, SALE)</label>
+                            <input type="text" value={currentProduct.badge || ''} onChange={e => setCurrentProduct({...currentProduct, badge: e.target.value})} placeholder="e.g. NEW ARRIVAL" style={{ width: '100%', padding: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'white' }} />
+                        </div>
+                    </div>
                     <div>
-                        <label>Image URL or Path</label>
-                        <input type="text" value={currentProduct.image || ''} onChange={e => setCurrentProduct({...currentProduct, image: e.target.value})} style={{ width: '100%', padding: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'white' }} />
+                        <label>Old Price (Optional - for strikethrough)</label>
+                        <input type="number" value={currentProduct.old_price || ''} onChange={e => setCurrentProduct({...currentProduct, old_price: Number(e.target.value)})} placeholder="Original price before discount" style={{ width: '100%', padding: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'white' }} />
                     </div>
                     <div>
                         <label>Description (Bio)</label>
