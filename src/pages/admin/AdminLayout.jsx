@@ -4,14 +4,18 @@ import AdminOrders from './AdminOrders';
 import AdminLogin from './AdminLogin';
 import { supabase } from '../../lib/supabase';
 
+import AdminOverview from './AdminOverview';
+import './AdminDashboard.css';
+
 const AdminLayout = () => {
-    const [subRoute, setSubRoute] = useState(window.location.hash.replace('#admin/', ''));
-    const [session, setSession] = useState(null);
+    const [user, setUser] = useState(null);
+    const [currentView, setCurrentView] = useState('overview');
     const [loadingAuth, setLoadingAuth] = useState(true);
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setUser(session?.user ?? null);
+            setLoadingAuth(false);
         });
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -25,6 +29,7 @@ const AdminLayout = () => {
         await supabase.auth.signOut();
     };
 
+    if (loadingAuth) return <div className="admin-loading">Authenticating Nexus...</div>;
     if (!user) return <AdminLogin />;
 
     const renderView = () => {
