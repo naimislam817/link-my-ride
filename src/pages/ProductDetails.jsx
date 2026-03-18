@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './ProductDetails.css';
-import { getProductById, productsList, getProductsByCategory } from '../data/siteContent';
+import { useShop } from '../context/ShopContext';
 import '../components/home/GadgetsSection.css';
 
 const ProductDetails = () => {
+    const { getProductById, getProductsByCategory, loading, products } = useShop();
     const [deliveryOption, setDeliveryOption] = useState('inside');
     const [quantity, setQuantity] = useState(1);
     const [product, setProduct] = useState(null);
@@ -31,10 +32,10 @@ const ProductDetails = () => {
             }
         }
         // Fallback
-        setProduct(productsList[0]);
-    }, []);
+        setProduct(products[0]);
+    }, [products]);
 
-    if (!product) return <div className="container section-padding">Loading...</div>;
+    if (loading || !product) return <div className="container section-padding">Loading...</div>;
 
     const deliveryFee = deliveryOption === 'inside' ? 60 : 100;
     const totalPayable = (product.price * quantity) + deliveryFee;

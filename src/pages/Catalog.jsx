@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { getProductsByCategory, categoriesContent } from '../data/siteContent';
+import { categoriesContent } from '../data/siteContent';
+import { useShop } from '../context/ShopContext';
 import './Catalog.css';
 
 const Catalog = () => {
+    const { getProductsByCategory, loading } = useShop();
     const [category, setCategory] = useState('all');
 
     useEffect(() => {

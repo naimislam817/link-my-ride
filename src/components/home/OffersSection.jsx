@@ -1,10 +1,11 @@
 import React from 'react';
 import './OffersSection.css';
-import { productsList } from '../../data/siteContent';
+import { useShop } from '../../context/ShopContext';
 
 const OffersSection = () => {
+    const { products } = useShop();
     // Select 3 products for the marquee
-    const marqueeProducts = productsList.slice(3, 6);
+    const marqueeProducts = products.slice(3, 6);
 
     return (
         <section className="offers-section container section-padding">

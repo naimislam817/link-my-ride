@@ -1,8 +1,9 @@
 import React from 'react';
 import './GadgetsSection.css';
-import { getFeaturedProducts } from '../../data/siteContent';
+import { useShop } from '../../context/ShopContext';
 
 const GadgetsSection = () => {
+    const { getFeaturedProducts } = useShop();
     const products = getFeaturedProducts();
 
     return (

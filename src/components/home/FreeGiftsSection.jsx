@@ -1,10 +1,11 @@
 import React from 'react';
 import './FreeGiftsSection.css';
-import { productsList } from '../../data/siteContent';
+import { useShop } from '../../context/ShopContext';
 
 const FreeGiftsSection = () => {
+    const { products } = useShop();
     // Get more products for the marquee
-    const marqueeProducts = productsList.slice(0, 6);
+    const marqueeProducts = products.slice(0, 6);
 
     return (
         <section className="free-gifts-section container section-padding">
