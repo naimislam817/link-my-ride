@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ProductDetails.css';
 import { useShop } from '../context/ShopContext';
+import { supabase } from '../lib/supabase';
 import '../components/home/GadgetsSection.css';
 
 const ProductDetails = () => {
@@ -53,14 +54,41 @@ const ProductDetails = () => {
         window.open(waLink, '_blank');
     };
 
-    const handleWebsiteOrder = (e) => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleWebsiteOrder = async (e) => {
         e.preventDefault();
-        // Here you would typically send data to a backend
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 4000);
-        // Reset form
-        setFormData({ name: '', address: '', phone: '' });
-        setQuantity(1);
+        setIsSubmitting(true);
+        
+        try {
+            const orderData = {
+                customer_name: formData.name,
+                customer_email: 'website-order@no-email.com', // Placeholder or add email field
+                customer_phone: formData.phone,
+                customer_address: formData.address,
+                total_amount: totalPayable,
+                items: [{
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: quantity
+                }],
+                status: 'pending'
+            };
+
+            const { error } = await supabase.from('orders').insert([orderData]);
+            if (error) throw error;
+
+            setShowSuccess(true);
+            setTimeout(() => setShowSuccess(false), 5000);
+            setFormData({ name: '', address: '', phone: '' });
+            setQuantity(1);
+        } catch (err) {
+            console.error("Order Error:", err);
+            alert("Failed to place order. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -190,8 +218,8 @@ const ProductDetails = () => {
                             <button type="button" className="action-btn whatsapp-btn" onClick={handleWhatsAppOrder}>
                                 <span>💬</span> ORDER ON WHATSAPP
                             </button>
-                            <button type="submit" className="action-btn website-btn">
-                                <span>🛍️</span> ORDER NOW (WEBSITE)
+                            <button type="submit" className="action-btn website-btn" disabled={isSubmitting}>
+                                <span>🛍️</span> {isSubmitting ? 'SUBMITTING...' : 'ORDER NOW (WEBSITE)'}
                             </button>
                         </form>
 
