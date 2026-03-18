@@ -124,9 +124,53 @@ export const ShopProvider = ({ children }) => {
     setCart([]);
   };
 
-  // Admin Tools
+  // Admin Functions & Analytics
+  const [orders, setOrders] = useState([]);
+
+  const fetchOrders = async () => {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (!error) setOrders(data);
+  };
+
+  useEffect(() => {
+    if (products.length > 0) fetchOrders();
+  }, [products]);
+
+  const getAnalytics = () => {
+    const totalRevenue = orders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+    const totalOrders = orders.length;
+    
+    // Calculate popular products
+    const productCounts = {};
+    orders.forEach(order => {
+      const items = order.items;
+      if (Array.isArray(items)) {
+        items.forEach(item => {
+          productCounts[item.id] = (productCounts[item.id] || 0) + (item.quantity || 1);
+        });
+      }
+    });
+
+    const popularProducts = Object.keys(productCounts)
+      .map(id => {
+        const product = products.find(p => String(p.id) === String(id));
+        return {
+          ...product,
+          salesCount: productCounts[id]
+        };
+      })
+      .filter(p => p.name)
+      .sort((a, b) => b.salesCount - a.salesCount)
+      .slice(0, 5);
+
+    return { totalRevenue, totalOrders, popularProducts, orders };
+  };
+
   const getFeaturedProducts = () => products.filter(p => p.is_active);
-  const getProductById = (id) => products.find(p => p.id === id);
+  const getProductById = (id) => products.find(p => String(p.id) === String(id));
   const getProductsByCategory = (category) => {
     if (!category || category === 'all') return products;
     return products.filter(p => p.category === category);
@@ -134,6 +178,7 @@ export const ShopProvider = ({ children }) => {
 
   const value = {
     products,
+    orders,
     loading,
     cart,
     addToCart,
@@ -143,6 +188,8 @@ export const ShopProvider = ({ children }) => {
     getFeaturedProducts,
     getProductById,
     getProductsByCategory,
+    getAnalytics,
+    fetchOrders,
     refreshProducts: fetchProducts
   };
 

@@ -10,70 +10,124 @@ const AdminLayout = () => {
     const [loadingAuth, setLoadingAuth] = useState(true);
 
     useEffect(() => {
-        // Check active sessions and sets the user
         supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setLoadingAuth(false);
+            setUser(session?.user ?? null);
         });
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
+            setUser(session?.user ?? null);
         });
 
-        const handleHashChange = () => {
-            const hash = window.location.hash;
-            if (hash.startsWith('#admin/')) {
-                setSubRoute(hash.replace('#admin/', ''));
-            } else {
-                setSubRoute('dashboard');
-            }
-        };
-        window.addEventListener('hashchange', handleHashChange);
-
-        return () => {
-            window.removeEventListener('hashchange', handleHashChange);
-            subscription.unsubscribe();
-        };
+        return () => subscription.unsubscribe();
     }, []);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
     };
 
-    const renderContent = () => {
-        if (subRoute === 'products') return <AdminProducts />;
-        if (subRoute === 'orders') return <AdminOrders />;
-        return (
-            <div>
-                <h2>Welcome to Admin Dashboard</h2>
-                <p>Select an option from the sidebar to manage your store.</p>
-            </div>
-        );
+    if (!user) return <AdminLogin />;
+
+    const renderView = () => {
+        switch (currentView) {
+            case 'overview': return <AdminOverview />;
+            case 'products': return <AdminProducts />;
+            case 'orders': return <AdminOrders />;
+            default: return <AdminOverview />;
+        }
     };
 
-    if (loadingAuth) {
-        return <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading Admin Panel...</div>;
-    }
-
-    if (!session) {
-        return <AdminLogin onLogin={(s) => setSession(s)} />;
-    }
-
     return (
-        <div style={{ minHeight: '80vh', display: 'flex' }}>
-            <div style={{ width: '250px', background: 'var(--bg-secondary)', borderRight: '1px solid var(--border-color)', padding: '20px' }}>
-                <h3 style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '15px', marginBottom: '20px' }}>ADMIN PANEL</h3>
-                <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px', height: '100%' }}>
-                    <a href="#admin/dashboard" style={{ color: 'var(--text-primary)', textDecoration: 'none', padding: '10px', borderRadius: '5px' }}>Overview</a>
-                    <a href="#admin/products" style={{ color: 'var(--text-primary)', textDecoration: 'none', padding: '10px', borderRadius: '5px' }}>Products</a>
-                    <a href="#admin/orders" style={{ color: 'var(--text-primary)', textDecoration: 'none', padding: '10px', borderRadius: '5px' }}>Orders</a>
-                    <div style={{ flex: 1 }}></div>
-                    <button onClick={handleLogout} style={{ marginTop: 'auto', background: 'transparent', color: '#e74c3c', border: '1px solid #e74c3c', padding: '10px', borderRadius: '5px', cursor: 'pointer' }}>Logout</button>
-                </nav>
+        <div className="admin-dashboard-container">
+            <div style={{ display: 'flex', minHeight: '100vh' }}>
+                {/* Sidebar */}
+                <aside style={{ 
+                    width: '280px', 
+                    background: 'rgba(15, 17, 26, 0.95)', 
+                    borderRight: '1px solid var(--admin-border)',
+                    padding: '40px 20px',
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}>
+                    <div style={{ padding: '0 20px', marginBottom: '40px' }}>
+                        <h2 style={{ fontSize: '1.2rem', fontWeight: 900, letterSpacing: '2px', color: 'var(--admin-accent)' }}>LINKMYRIDE</h2>
+                        <span style={{ fontSize: '0.65rem', color: 'var(--admin-text-muted)', letterSpacing: '1px' }}>ADMIN COMMAND CENTER</span>
+                    </div>
+
+                    <nav style={{ flex: 1 }}>
+                        <ul style={{ listStyle: 'none', padding: 0 }}>
+                            <li 
+                                className={`sidebar-link ${currentView === 'overview' ? 'active' : ''}`}
+                                onClick={() => setCurrentView('overview')}
+                            >
+                                <span className="sidebar-icon">📊</span> Overview
+                            </li>
+                            <li 
+                                className={`sidebar-link ${currentView === 'products' ? 'active' : ''}`}
+                                onClick={() => setCurrentView('products')}
+                            >
+                                <span className="sidebar-icon">📦</span> Products
+                            </li>
+                            <li 
+                                className={`sidebar-link ${currentView === 'orders' ? 'active' : ''}`}
+                                onClick={() => setCurrentView('orders')}
+                            >
+                                <span className="sidebar-icon">📋</span> Orders
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <div style={{ marginTop: 'auto', padding: '20px' }}>
+                        <div style={{ marginBottom: '15px', fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>
+                            Logged in as:<br/>
+                            <span style={{ color: 'white' }}>{user.email}</span>
+                        </div>
+                        <button onClick={handleLogout} className="admin-btn admin-btn-outline" style={{ width: '100%', justifyContent: 'center' }}>
+                            🚪 Logout
+                        </button>
+                    </div>
+                </aside>
+
+                {/* Main Content */}
+                <main style={{ flex: 1, padding: '40px', overflowY: 'auto' }}>
+                    {renderView()}
+                </main>
             </div>
-            <div style={{ flex: 1, padding: '40px', background: 'var(--bg-primary)', overflowY: 'auto' }}>
-                {renderContent()}
-            </div>
+
+            <style jsx>{`
+                .sidebar-link {
+                    padding: 14px 20px;
+                    border-radius: 12px;
+                    margin-bottom: 8px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    color: var(--admin-text-muted);
+                    font-weight: 500;
+                }
+                .sidebar-link:hover {
+                    background: rgba(255, 255, 255, 0.05);
+                    color: white;
+                }
+                .sidebar-link.active {
+                    background: var(--admin-accent);
+                    color: white;
+                    box-shadow: 0 4px 15px var(--admin-accent-glow);
+                }
+                .sidebar-icon {
+                    font-size: 1.1rem;
+                }
+                .admin-btn-outline {
+                    background: transparent;
+                    border: 1px solid var(--admin-border);
+                    color: var(--admin-text);
+                }
+                .admin-btn-outline:hover {
+                    background: rgba(255, 255, 255, 0.05);
+                    border-color: var(--admin-accent);
+                }
+            `}</style>
         </div>
     );
 };
