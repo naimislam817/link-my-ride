@@ -119,7 +119,7 @@ const ProductDetails = () => {
             <div className="product-layout animate-fade-in">
 
                 {/* Left Side: Product Image & Info */}
-                <div className="product-showcase reveal">
+                <div className="product-showcase animate-fade-in" style={{ animationDelay: '0.1s' }}>
                     <div className="product-img-box">
                         {product.badge && <span className="badge new-arrival-badge">{product.badge}</span>}
                         
@@ -193,7 +193,7 @@ const ProductDetails = () => {
                 </div>
 
                 {/* Right Side: Checkout Form */}
-                <div className="checkout-sidebar reveal">
+                <div className="checkout-sidebar animate-fade-in" style={{ animationDelay: '0.2s' }}>
                     <div className="checkout-card">
                         <div className="price-header">
                             <span className="price-label">PRODUCT PRICE</span>
