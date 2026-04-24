@@ -50,10 +50,20 @@ const ProductDetails = () => {
     const deliveryFee = deliveryOption === 'inside' ? 60 : 100;
     const totalPayable = (product.price * quantity) + deliveryFee;
 
-    // Get images — use images array, fall back to single image
-    const productImages = product.images && product.images.length > 0 
-        ? product.images 
-        : (product.image ? [product.image] : []);
+    // Get images — use images array, fall back to single image, ensure array
+    let productImages = [];
+    if (Array.isArray(product.images) && product.images.length > 0) {
+        productImages = product.images;
+    } else if (product.image) {
+        productImages = [product.image];
+    } else if (product.images && typeof product.images === 'string') {
+        try {
+            productImages = JSON.parse(product.images);
+            if (!Array.isArray(productImages)) productImages = [];
+        } catch (e) {
+            productImages = [];
+        }
+    }
 
     const handleQuantityChange = (amount) => {
         setQuantity(prev => {
@@ -168,10 +178,10 @@ const ProductDetails = () => {
 
                     <div className="product-main-info">
                         <h1 className="product-title">
-                            {product.name ? product.name.split(' ').map((word, i) => {
+                            {typeof product.name === 'string' ? product.name.split(' ').map((word, i) => {
                                 if (i === 1) return <span key={i} className="text-accent"> {word} </span>;
                                 return <em key={i}> {word} </em>;
-                            }) : 'Product Details'}
+                            }) : (product.name || 'Product Details')}
                         </h1>
                         <div className="product-rating">
                             <span className="stars">★★★★★</span>
@@ -182,10 +192,10 @@ const ProductDetails = () => {
                         </p>
 
                         <div className="product-features-grid">
-                            {product.features && product.features.map((feat, i) => (
+                            {Array.isArray(product.features) && product.features.map((feat, i) => (
                                 <div className="feature-box" key={i}>
-                                    <span className="feature-val">{feat.val}</span>
-                                    <span className="feature-label">{feat.label}</span>
+                                    <span className="feature-val">{typeof feat === 'object' ? feat.val : ''}</span>
+                                    <span className="feature-label">{typeof feat === 'object' ? feat.label : feat}</span>
                                 </div>
                             ))}
                         </div>
@@ -198,8 +208,8 @@ const ProductDetails = () => {
                         <div className="price-header">
                             <span className="price-label">PRODUCT PRICE</span>
                             <div className="price-display">
-                                <span className="current-price">{product.price?.toLocaleString()} TK</span>
-                                {product.old_price && <span className="old-price">{product.old_price?.toLocaleString()} TK</span>}
+                                <span className="current-price">{Number(product.price || 0).toLocaleString()} TK</span>
+                                {product.old_price && <span className="old-price">{Number(product.old_price).toLocaleString()} TK</span>}
                             </div>
                         </div>
 
@@ -299,9 +309,9 @@ const ProductDetails = () => {
                                 </div>
                                 <div className="product-info">
                                     <h3 className="product-name">{p.name}</h3>
-                                    <p className="product-desc" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.desc}</p>
+                                    <p className="product-desc" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.desc || p.description}</p>
                                     <div className="product-footer" style={{ marginTop: 'auto', paddingTop: '15px' }}>
-                                        <span className="product-price">৳{p.price.toLocaleString()}</span>
+                                        <span className="product-price">৳{Number(p.price || 0).toLocaleString()}</span>
                                     </div>
                                 </div>
                             </div>
