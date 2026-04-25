@@ -8,6 +8,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import AdminLayout from './pages/admin/AdminLayout';
 import FloatingWhatsApp from './components/layout/FloatingWhatsApp';
+import CartDrawer from './components/cart/CartDrawer';
 import { useShop } from './context/ShopContext';
 import './index.css';
 
@@ -74,6 +75,7 @@ function App() {
       <main>
         {renderPage()}
       </main>
+      <CartDrawer />
       <Footer />
       <FloatingWhatsApp />
     </div>

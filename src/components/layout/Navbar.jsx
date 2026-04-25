@@ -5,7 +5,7 @@ import { useShop } from '../../context/ShopContext';
 
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { cart } = useShop();
+    const { cart, setIsCartOpen } = useShop();
     
     const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
@@ -35,7 +35,7 @@ const Navbar = () => {
                 </div>
 
                 <div className="nav-actions">
-                    <button className="cart-btn" aria-label="Cart" onClick={() => window.location.hash = '#cart'}>
+                    <button className="cart-btn" aria-label="Cart" onClick={() => setIsCartOpen(true)}>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="9" cy="21" r="1"></circle>
                             <circle cx="20" cy="21" r="1"></circle>

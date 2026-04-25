@@ -319,3 +319,26 @@
     border-color: var(--admin-accent);
     color: var(--admin-accent);
 }
+
+/* Calendar button for date picker */
+.admin-calendar-btn {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--admin-border);
+    color: var(--admin-text);
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+}
+.admin-calendar-btn:hover {
+    background: rgba(0,0,0,0.3);
+    border-color: var(--admin-accent);
+}
+.admin-calendar-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--admin-accent-glow);
+}

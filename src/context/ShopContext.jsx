@@ -8,6 +8,8 @@ export const ShopProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [heroSlides, setHeroSlides] = useState([]);
 
   // Fetch products from Supabase
   const fetchProducts = async () => {
@@ -82,8 +84,24 @@ export const ShopProvider = ({ children }) => {
     }
   };
 
+  const fetchHeroSlides = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('hero_slides')
+        .select('*')
+        .order('id', { ascending: true });
+        
+      if (!error && data && data.length > 0) {
+        setHeroSlides(data);
+      }
+    } catch (err) {
+      console.warn("Could not fetch hero slides. Table might not exist yet.");
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
+    fetchHeroSlides();
 
     // Subscribe to real-time changes
     const subscription = supabase
@@ -100,16 +118,17 @@ export const ShopProvider = ({ children }) => {
   }, []);
 
   // Cart Functions
-  const addToCart = (product) => {
+  const addToCart = (product, quantity = 1) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
         return prev.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
         );
       }
-      return [...prev, { ...product, quantity: 1 }];
+      return [...prev, { ...product, quantity }];
     });
+    setIsCartOpen(true); // Open drawer on add
   };
 
   const removeFromCart = (productId) => {
@@ -189,6 +208,10 @@ export const ShopProvider = ({ children }) => {
     orders,
     loading,
     cart,
+    isCartOpen,
+    setIsCartOpen,
+    heroSlides,
+    refreshHeroSlides: fetchHeroSlides,
     addToCart,
     removeFromCart,
     updateQuantity,

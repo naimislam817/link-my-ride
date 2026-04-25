@@ -12,7 +12,7 @@ import { supabase } from '../lib/supabase';
 import '../components/home/GadgetsSection.css';
 
 const ProductDetails = () => {
-    const { getProductById, getProductsByCategory, loading, products } = useShop();
+    const { getProductById, getProductsByCategory, loading, products, addToCart } = useShop();
     const [deliveryOption, setDeliveryOption] = useState('inside');
     const [quantity, setQuantity] = useState(1);
     const [product, setProduct] = useState(null);
@@ -278,9 +278,14 @@ const ProductDetails = () => {
                             <button type="button" className="action-btn whatsapp-btn" onClick={handleWhatsAppOrder}>
                                 <span>💬</span> ORDER ON WHATSAPP
                             </button>
-                            <button type="submit" className="action-btn website-btn" disabled={isSubmitting}>
-                                <span>🛍️</span> {isSubmitting ? 'SUBMITTING...' : 'ORDER NOW (WEBSITE)'}
-                            </button>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button type="button" className="action-btn cart-add-btn" onClick={() => addToCart(product, quantity)} style={{ flex: 1, background: 'var(--accent-cyan)', color: '#000', fontWeight: 'bold' }}>
+                                    <span>🛒</span> ADD TO CART
+                                </button>
+                                <button type="submit" className="action-btn website-btn" disabled={isSubmitting} style={{ flex: 1 }}>
+                                    <span>🛍️</span> {isSubmitting ? 'SUBMITTING...' : 'BUY NOW'}
+                                </button>
+                            </div>
                         </form>
 
                     </div>

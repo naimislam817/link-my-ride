@@ -47,52 +47,260 @@ const Checkout = () => {
     }
 
     return (
-        <div className="container section-padding" style={{ minHeight: '60vh' }}>
-            <h2>Checkout</h2>
+        <div className="checkout-page container section-padding animate-fade-in" style={{ minHeight: '80vh' }}>
+            <div className="checkout-header">
+                <h1 className="catalog-title">SECURE <span className="text-accent">CHECKOUT</span></h1>
+                <p className="catalog-desc">Complete your order details below to finalize your purchase.</p>
+            </div>
+
             {cart.length === 0 ? (
-                <p>Your cart is empty.</p>
+                <div className="empty-checkout">
+                    <span style={{ fontSize: '3rem', display: 'block', marginBottom: '20px' }}>🛒</span>
+                    <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Your cart is empty.</p>
+                    <a href="#catalog" className="btn btn-primary" style={{ marginTop: '20px' }}>Return to Shop</a>
+                </div>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', marginTop: '30px' }}>
-                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                        <div>
-                            <label>Full Name</label>
-                            <input type="text" className="form-control" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required style={{ width: '100%', padding: '10px', marginTop: '5px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'white' }} />
-                        </div>
-                        <div>
-                            <label>Phone Number</label>
-                            <input type="tel" className="form-control" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} required style={{ width: '100%', padding: '10px', marginTop: '5px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'white' }} />
-                        </div>
-                        <div>
-                            <label>Email</label>
-                            <input type="email" className="form-control" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required style={{ width: '100%', padding: '10px', marginTop: '5px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'white' }} />
-                        </div>
-                        <div>
-                            <label>Delivery Address</label>
-                            <textarea className="form-control" rows="3" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} required style={{ width: '100%', padding: '10px', marginTop: '5px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'white' }}></textarea>
-                        </div>
-                        <button type="submit" className="btn btn-primary" disabled={status === 'submitting'} style={{ marginTop: '10px' }}>
-                            {status === 'submitting' ? 'Processing...' : `Place Order (৳${total.toLocaleString()})`}
-                        </button>
-                        {status === 'error' && <p style={{ color: 'red' }}>There was an error placing your order. Please try again.</p>}
-                    </form>
+                <div className="checkout-grid">
+                    {/* Left: Form */}
+                    <div className="checkout-form-container">
+                        <form onSubmit={handleSubmit} className="checkout-form">
+                            <h3 className="section-subtitle">Shipping Details</h3>
+                            
+                            <div className="form-group">
+                                <label>Full Name</label>
+                                <input type="text" className="modern-input" placeholder="Enter your full name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
+                            </div>
+                            <div className="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" className="modern-input" placeholder="+880 1XXX-XXXXXX" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} required />
+                            </div>
+                            <div className="form-group">
+                                <label>Email Address</label>
+                                <input type="email" className="modern-input" placeholder="your@email.com" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required />
+                            </div>
+                            <div className="form-group">
+                                <label>Delivery Address</label>
+                                <textarea className="modern-input" rows="3" placeholder="House #, Street, Thana, City" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} required></textarea>
+                            </div>
+                        </form>
+                    </div>
                     
-                    <div style={{ background: 'var(--bg-secondary)', padding: '20px', borderRadius: '10px' }}>
-                        <h3>Order Summary</h3>
-                        <div style={{ marginTop: '20px' }}>
-                            {cart.map(item => (
-                                <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                                    <span>{item.name} x {item.quantity}</span>
-                                    <span>৳{(item.price * item.quantity).toLocaleString()}</span>
-                                </div>
-                            ))}
-                        </div>
-                        <div style={{ borderTop: '1px solid var(--border-color)', marginTop: '20px', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
-                            <span>Total</span>
-                            <span style={{ color: 'var(--accent-cyan)' }}>৳{total.toLocaleString()}</span>
+                    {/* Right: Order Summary */}
+                    <div className="checkout-summary-container">
+                        <div className="summary-glass-card">
+                            <h3 className="section-subtitle">Order Summary</h3>
+                            
+                            <div className="summary-items">
+                                {cart.map(item => (
+                                    <div key={item.id} className="summary-item">
+                                        <div className="summary-item-info">
+                                            <span className="summary-item-name">{item.name}</span>
+                                            <span className="summary-item-qty">x {item.quantity}</span>
+                                        </div>
+                                        <span className="summary-item-price">৳{(item.price * item.quantity).toLocaleString()}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            <div className="summary-total">
+                                <span>Total Payable</span>
+                                <span className="total-value">৳{total.toLocaleString()}</span>
+                            </div>
+
+                            <button 
+                                onClick={handleSubmit} 
+                                className="modern-submit-btn" 
+                                disabled={status === 'submitting'}
+                            >
+                                {status === 'submitting' ? (
+                                    <span className="btn-content">PROCESSING...</span>
+                                ) : (
+                                    <span className="btn-content">
+                                        PLACE ORDER <span className="btn-total">(৳{total.toLocaleString()})</span>
+                                    </span>
+                                )}
+                            </button>
+                            {status === 'error' && <p className="error-msg">Failed to place order. Please try again.</p>}
                         </div>
                     </div>
                 </div>
             )}
+
+            <style jsx>{`
+                .checkout-page {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                .checkout-header {
+                    text-align: center;
+                    margin-bottom: 50px;
+                }
+                .checkout-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 60px;
+                    align-items: start;
+                }
+                @media (max-width: 900px) {
+                    .checkout-grid {
+                        grid-template-columns: 1fr;
+                        gap: 40px;
+                    }
+                }
+                .section-subtitle {
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                    margin-bottom: 25px;
+                    color: var(--text-primary);
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+                .checkout-form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+                .form-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+                .form-group label {
+                    font-size: 0.9rem;
+                    color: var(--text-secondary);
+                    font-weight: 500;
+                }
+                .modern-input {
+                    background: rgba(255, 255, 255, 0.03);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: var(--radius-md);
+                    padding: 15px 20px;
+                    color: var(--text-primary);
+                    font-size: 1rem;
+                    transition: all 0.3s ease;
+                }
+                .modern-input:focus {
+                    outline: none;
+                    border-color: var(--accent-cyan);
+                    background: rgba(0, 210, 255, 0.05);
+                    box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
+                }
+                .modern-input::placeholder {
+                    color: rgba(255, 255, 255, 0.3);
+                }
+                .summary-glass-card {
+                    background: rgba(15, 17, 26, 0.6);
+                    backdrop-filter: blur(20px);
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+                    border-radius: var(--radius-lg);
+                    padding: 40px;
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                }
+                .summary-items {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 15px;
+                    margin-bottom: 30px;
+                }
+                .summary-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding-bottom: 15px;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                }
+                .summary-item-info {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 5px;
+                }
+                .summary-item-name {
+                    font-weight: 600;
+                    color: var(--text-primary);
+                }
+                .summary-item-qty {
+                    font-size: 0.85rem;
+                    color: var(--text-secondary);
+                }
+                .summary-item-price {
+                    font-weight: 700;
+                    color: var(--accent-cyan);
+                }
+                .summary-total {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 30px;
+                    padding-top: 10px;
+                }
+                .summary-total span:first-child {
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    color: var(--text-secondary);
+                }
+                .total-value {
+                    font-size: 1.8rem;
+                    font-weight: 800;
+                    color: var(--accent-cyan);
+                }
+                .modern-submit-btn {
+                    width: 100%;
+                    padding: 20px;
+                    border-radius: var(--radius-md);
+                    background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+                    border: none;
+                    cursor: pointer;
+                    position: relative;
+                    overflow: hidden;
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    box-shadow: 0 10px 25px rgba(0, 210, 255, 0.4);
+                }
+                .modern-submit-btn::before {
+                    content: '';
+                    position: absolute;
+                    top: 0; left: -100%;
+                    width: 100%; height: 100%;
+                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+                    transition: left 0.5s ease;
+                }
+                .modern-submit-btn:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 15px 35px rgba(0, 210, 255, 0.6);
+                }
+                .modern-submit-btn:hover::before {
+                    left: 100%;
+                }
+                .modern-submit-btn:disabled {
+                    background: var(--bg-tertiary);
+                    cursor: not-allowed;
+                    box-shadow: none;
+                    transform: none;
+                }
+                .btn-content {
+                    position: relative;
+                    z-index: 2;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 10px;
+                    font-size: 1.1rem;
+                    font-weight: 800;
+                    color: #000;
+                    letter-spacing: 1px;
+                }
+                .btn-total {
+                    background: rgba(0,0,0,0.2);
+                    padding: 4px 10px;
+                    border-radius: 20px;
+                    font-size: 0.9rem;
+                }
+                .error-msg {
+                    color: var(--accent-red);
+                    text-align: center;
+                    margin-top: 15px;
+                    font-size: 0.9rem;
+                }
+            `}</style>
         </div>
     );
 };
