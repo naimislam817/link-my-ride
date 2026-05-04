@@ -9,6 +9,8 @@ const Checkout = () => {
 
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
+    const [invoiceNumber, setInvoiceNumber] = useState('');
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (cart.length === 0) return;
@@ -16,7 +18,7 @@ const Checkout = () => {
         setStatus('submitting');
         
         try {
-            const { error } = await supabase.from('orders').insert([{
+            const { data, error } = await supabase.from('orders').insert([{
                 customer_name: formData.name,
                 customer_phone: formData.phone,
                 customer_email: formData.email,
@@ -24,10 +26,12 @@ const Checkout = () => {
                 total_amount: total,
                 items: cart,
                 status: 'pending'
-            }]);
+            }]).select();
             
             if (error) throw error;
             
+            const invId = data?.[0]?.id || Math.floor(Math.random() * 10000);
+            setInvoiceNumber(`LMR-${String(invId).padStart(5, '0')}`);
             clearCart();
             setStatus('success');
         } catch (err) {
@@ -38,10 +42,32 @@ const Checkout = () => {
 
     if (status === 'success') {
         return (
-            <div className="container section-padding" style={{ textAlign: 'center', minHeight: '60vh' }}>
-                <h2 style={{ color: 'var(--accent-green)' }}>Order Placed Successfully!</h2>
-                <p>Thank you for shopping with us. We will process your order soon.</p>
-                <a href="#catalog" className="btn btn-primary" style={{ marginTop: '20px' }}>Back to Shop</a>
+            <div className="container section-padding animate-fade-in" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="success-glass-card" style={{ maxWidth: '600px', width: '100%', textAlign: 'center', padding: '50px 30px', background: 'rgba(15, 17, 26, 0.8)', backdropFilter: 'blur(20px)', borderRadius: 'var(--radius-xl)', border: '1px solid rgba(0, 210, 255, 0.2)', boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)' }}>
+                    <div style={{ width: '80px', height: '80px', background: 'rgba(0, 210, 255, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '2px solid var(--accent-cyan)' }}>
+                        <span style={{ fontSize: '3rem' }}>✔️</span>
+                    </div>
+                    <h2 style={{ color: '#fff', fontSize: '2rem', marginBottom: '10px', fontWeight: 800 }}>Order Confirmed!</h2>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '30px' }}>Your order has been successfully placed and is being processed.</p>
+                    
+                    <div style={{ background: 'rgba(0,0,0,0.3)', padding: '20px', borderRadius: 'var(--radius-md)', marginBottom: '35px', display: 'inline-block', textAlign: 'left', minWidth: '250px' }}>
+                        <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Invoice Number</div>
+                        <div style={{ fontSize: '1.8rem', color: 'var(--accent-cyan)', fontWeight: 800, letterSpacing: '2px' }}>{invoiceNumber}</div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <a href="/" className="modern-submit-btn" style={{ textDecoration: 'none', width: 'auto', padding: '15px 30px', display: 'inline-block', background: 'linear-gradient(135deg, #1f2235 0%, #151828 100%)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}>
+                            <span className="btn-content">🏠 BACK TO HOME</span>
+                        </a>
+                        <a href="#catalog" className="modern-submit-btn" style={{ textDecoration: 'none', width: 'auto', padding: '15px 30px', display: 'inline-block' }}>
+                            <span className="btn-content">🛒 CONTINUE SHOPPING</span>
+                        </a>
+                    </div>
+                    
+                    <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                        Need help? Call us at <a href="tel:+8801622864377" style={{ color: 'var(--accent-cyan)', textDecoration: 'none', fontWeight: 'bold' }}>📞 +880 1622 864377</a>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -140,6 +166,13 @@ const Checkout = () => {
                     grid-template-columns: 1fr 1fr;
                     gap: 60px;
                     align-items: start;
+                }
+                .success-glass-card {
+                    animation: popupSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                }
+                @keyframes popupSlideIn {
+                    0% { transform: translateY(30px) scale(0.95); opacity: 0; }
+                    100% { transform: translateY(0) scale(1); opacity: 1; }
                 }
                 @media (max-width: 900px) {
                     .checkout-grid {

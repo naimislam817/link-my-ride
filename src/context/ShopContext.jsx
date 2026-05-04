@@ -10,6 +10,8 @@ export const ShopProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [heroSlides, setHeroSlides] = useState([]);
+  const [deliverySettings, setDeliverySettings] = useState({ inside: 60, outside: 100 });
+  const [settingsError, setSettingsError] = useState(null);
 
   // Fetch products from Supabase
   const fetchProducts = async () => {
@@ -99,9 +101,48 @@ export const ShopProvider = ({ children }) => {
     }
   };
 
+  const fetchDeliverySettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('settings')
+        .select('*')
+        .eq('key', 'delivery')
+        .single();
+      
+      if (error) throw error;
+      if (data && data.value) {
+        setDeliverySettings(data.value);
+        setSettingsError(null);
+      }
+    } catch (err) {
+      console.warn("Settings table might not exist or no delivery settings found.", err.message);
+      setSettingsError(err.message);
+    }
+  };
+
+  const updateDeliverySettings = async (inside, outside) => {
+    try {
+      const newValue = { inside: Number(inside), outside: Number(outside) };
+      
+      // Try to update or insert
+      const { error } = await supabase
+        .from('settings')
+        .upsert({ key: 'delivery', value: newValue });
+        
+      if (error) throw error;
+      setDeliverySettings(newValue);
+      setSettingsError(null);
+      return { success: true };
+    } catch (err) {
+      console.error("Failed to update delivery settings", err);
+      return { success: false, error: err.message };
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
     fetchHeroSlides();
+    fetchDeliverySettings();
 
     // Subscribe to real-time changes
     const subscription = supabase
@@ -221,7 +262,10 @@ export const ShopProvider = ({ children }) => {
     getProductsByCategory,
     getAnalytics,
     fetchOrders,
-    refreshProducts: fetchProducts
+    refreshProducts: fetchProducts,
+    deliverySettings,
+    updateDeliverySettings,
+    settingsError
   };
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;

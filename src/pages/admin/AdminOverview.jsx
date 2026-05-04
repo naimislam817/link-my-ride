@@ -21,7 +21,7 @@ const AdminOverview = () => {
                 <div className="admin-card metric-card">
                     <span className="metric-label">Total Revenue</span>
                     <span className="metric-value">৳{totalRevenue.toLocaleString()}</span>
-                    <div style={{ marginTop: '10px', fontSize: '0.8rem', color: 'var(--admin-success)' }}>↑ 12% increase week-over-week</div>
+                    <div style={{ marginTop: '10px', fontSize: '0.8rem', color: 'var(--admin-success)' }}>Lifetime earnings</div>
                 </div>
                 <div className="admin-card metric-card">
                     <span className="metric-label">Total Orders</span>
@@ -29,9 +29,9 @@ const AdminOverview = () => {
                     <div style={{ marginTop: '10px', fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>{orders.filter(o => o.status === 'pending').length} pending processing</div>
                 </div>
                 <div className="admin-card metric-card">
-                    <span className="metric-label">Customer Conversion</span>
-                    <span className="metric-value">4.2%</span>
-                    <div style={{ marginTop: '10px', fontSize: '0.8rem', color: 'var(--admin-accent)' }}>Healthy engagement levels</div>
+                    <span className="metric-label">Average Order Value</span>
+                    <span className="metric-value">৳{totalOrders > 0 ? Math.round(totalRevenue / totalOrders).toLocaleString() : 0}</span>
+                    <div style={{ marginTop: '10px', fontSize: '0.8rem', color: 'var(--admin-accent)' }}>Per transaction</div>
                 </div>
             </div>
 

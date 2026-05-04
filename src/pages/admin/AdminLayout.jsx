@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AdminProducts from './AdminProducts';
 import AdminOrders from './AdminOrders';
 import AdminLogin from './AdminLogin';
+import AdminSettings from './AdminSettings';
 import { supabase } from '../../lib/supabase';
 
 import AdminOverview from './AdminOverview';
@@ -37,6 +38,7 @@ const AdminLayout = () => {
             case 'overview': return <AdminOverview />;
             case 'products': return <AdminProducts />;
             case 'orders': return <AdminOrders />;
+            case 'settings': return <AdminSettings />;
             default: return <AdminOverview />;
         }
     };
@@ -77,6 +79,12 @@ const AdminLayout = () => {
                                 onClick={() => setCurrentView('orders')}
                             >
                                 <span className="sidebar-icon">📋</span> Orders
+                            </li>
+                            <li 
+                                className={`sidebar-link ${currentView === 'settings' ? 'active' : ''}`}
+                                onClick={() => setCurrentView('settings')}
+                            >
+                                <span className="sidebar-icon">⚙️</span> Settings
                             </li>
                         </ul>
                     </nav>

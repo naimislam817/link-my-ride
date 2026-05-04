@@ -106,7 +106,10 @@ const AdminOrders = () => {
                             {filteredOrders.map(order => (
                                 <tr key={order.id}>
                                     <td>
-                                        <div style={{ fontSize: '0.85rem' }}>{new Date(order.created_at).toLocaleDateString()}</div>
+                                        <div style={{ fontWeight: 800, color: 'var(--admin-accent)', fontSize: '0.9rem', marginBottom: '4px' }}>
+                                            LMR-{String(order.id).padStart(5, '0')}
+                                        </div>
+                                        <div style={{ fontSize: '0.8rem' }}>{new Date(order.created_at).toLocaleDateString()}</div>
                                         <div style={{ fontSize: '0.7rem', color: 'var(--admin-text-muted)' }}>{new Date(order.created_at).toLocaleTimeString()}</div>
                                     </td>
                                     <td>

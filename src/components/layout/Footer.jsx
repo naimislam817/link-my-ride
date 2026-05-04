@@ -53,7 +53,7 @@ const Footer = () => {
             </div>
 
             <div className="footer-bottom container">
-                <p>&copy; {new Date().getFullYear()} Link My Ride. All rights reserved. Built by <span className="text-accent" style={{ fontWeight: 'bold' }}>Syntrix IT</span>.</p>
+                <p>&copy; {new Date().getFullYear()} Link My Ride. All rights reserved.</p>
                 <div className="legal-links">
                     <a href="#">Privacy Policy</a>
                     <a href="#">Terms of Service</a>

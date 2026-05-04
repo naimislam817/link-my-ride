@@ -12,7 +12,7 @@ import { supabase } from '../lib/supabase';
 import '../components/home/GadgetsSection.css';
 
 const ProductDetails = () => {
-    const { getProductById, getProductsByCategory, loading, products, addToCart } = useShop();
+    const { getProductById, getProductsByCategory, loading, products, addToCart, deliverySettings } = useShop();
     const [deliveryOption, setDeliveryOption] = useState('inside');
     const [quantity, setQuantity] = useState(1);
     const [product, setProduct] = useState(null);
@@ -47,7 +47,7 @@ const ProductDetails = () => {
 
     if (loading || !product) return <div className="container section-padding">Loading...</div>;
 
-    const deliveryFee = deliveryOption === 'inside' ? 60 : 100;
+    const deliveryFee = deliveryOption === 'inside' ? deliverySettings.inside : deliverySettings.outside;
     const totalPayable = (product.price * quantity) + deliveryFee;
 
     // Get images — use images array, fall back to single image, ensure array
@@ -98,11 +98,14 @@ const ProductDetails = () => {
                 status: 'pending'
             };
 
-            const { error } = await supabase.from('orders').insert([orderData]);
+            const { data, error } = await supabase.from('orders').insert([orderData]).select();
             if (error) throw error;
 
+            const invId = data?.[0]?.id || Math.floor(Math.random() * 10000);
+            setGeneratedInvoice(`LMR-${String(invId).padStart(5, '0')}`);
+
             setShowSuccess(true);
-            setTimeout(() => setShowSuccess(false), 5000);
+            // setTimeout(() => setShowSuccess(false), 5000); // Do not auto-close so they can see invoice
             setFormData({ name: '', address: '', phone: '' });
             setQuantity(1);
         } catch (err) {
@@ -113,15 +116,32 @@ const ProductDetails = () => {
         }
     };
 
+    const [generatedInvoice, setGeneratedInvoice] = useState('');
+
     return (
         <div className="product-page container section-padding">
             {showSuccess && (
                 <div className="success-popup animate-fade-in">
-                    <div className="success-popup-content">
-                        <span className="success-icon">✔️</span>
-                        <h3>Order Submitted Successfully!</h3>
-                        <p>We have received your order for {quantity}x {product.name}. Our team will contact you shortly.</p>
-                        <button onClick={() => setShowSuccess(false)} className="btn btn-primary" style={{ marginTop: '15px' }}>DONE</button>
+                    <div className="success-popup-content" style={{ padding: '40px', background: 'rgba(15, 17, 26, 0.95)', border: '1px solid rgba(0, 210, 255, 0.3)', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8)', maxWidth: '500px', width: '90%' }}>
+                        <div style={{ width: '70px', height: '70px', background: 'rgba(0, 210, 255, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '2px solid var(--accent-cyan)' }}>
+                            <span className="success-icon" style={{ margin: 0, fontSize: '2.5rem' }}>✔️</span>
+                        </div>
+                        <h3 style={{ color: '#fff', fontSize: '1.8rem', fontWeight: 800, marginBottom: '10px' }}>Order Confirmed!</h3>
+                        <p style={{ color: 'var(--text-secondary)' }}>We have received your order for {quantity}x {product.name}.</p>
+                        
+                        <div style={{ background: 'rgba(0,0,0,0.4)', padding: '15px', borderRadius: '8px', margin: '25px 0', display: 'inline-block' }}>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Invoice Number</div>
+                            <div style={{ fontSize: '1.5rem', color: 'var(--accent-cyan)', fontWeight: 800, letterSpacing: '1px' }}>{generatedInvoice}</div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            <button onClick={() => setShowSuccess(false)} className="action-btn" style={{ flex: '1 1 120px', background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' }}>CLOSE</button>
+                            <a href="/" className="action-btn" style={{ flex: '1 1 120px', background: 'var(--accent-cyan)', color: '#000', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>HOME</a>
+                        </div>
+                        
+                        <div style={{ marginTop: '25px', paddingTop: '15px', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                            Need help? Call us at <a href="tel:+8801622864377" style={{ color: 'var(--accent-cyan)', textDecoration: 'none', fontWeight: 'bold' }}>📞 +880 1622 864377</a>
+                        </div>
                     </div>
                 </div>
             )}
@@ -209,7 +229,7 @@ const ProductDetails = () => {
                             <span className="price-label">PRODUCT PRICE</span>
                             <div className="price-display">
                                 <span className="current-price">{Number(product.price || 0).toLocaleString()} TK</span>
-                                {product.old_price && <span className="old-price">{Number(product.old_price).toLocaleString()} TK</span>}
+                                {product.old_price && <span className="old-price" style={{ textDecoration: 'line-through', color: '#999', fontSize: '1rem', marginLeft: '10px' }}>{Number(product.old_price).toLocaleString()} TK</span>}
                             </div>
                         </div>
 
@@ -245,14 +265,14 @@ const ProductDetails = () => {
                                         onClick={() => setDeliveryOption('inside')}
                                     >
                                         <span className="bold">Inside Dhaka</span>
-                                        <span className="small">60 TK</span>
+                                        <span className="small">{deliverySettings.inside} TK</span>
                                     </div>
                                     <div
                                         className={`delivery-btn ${deliveryOption === 'outside' ? 'active' : ''}`}
                                         onClick={() => setDeliveryOption('outside')}
                                     >
                                         <span className="bold">Outside Dhaka</span>
-                                        <span className="small">100 TK</span>
+                                        <span className="small">{deliverySettings.outside} TK</span>
                                     </div>
                                 </div>
                                 <p className="delivery-note">Inside Dhaka delivery is free from advance payment.</p>
