@@ -20,6 +20,7 @@ const ProductDetails = () => {
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
+    const [generatedInvoice, setGeneratedInvoice] = useState('');
 
     const [formData, setFormData] = useState({ name: '', address: '', phone: '' });
 
@@ -115,8 +116,6 @@ const ProductDetails = () => {
             setIsSubmitting(false);
         }
     };
-
-    const [generatedInvoice, setGeneratedInvoice] = useState('');
 
     return (
         <div className="product-page container section-padding">
