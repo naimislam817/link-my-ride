@@ -1,25 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import './AdminDashboard.css';
 
 /**
  * AdminOffers — Manage current promotional offers / discount banners.
- * Stores records in Supabase table: offers
- *
- * SQL to create table (run in Supabase SQL editor):
- * -------------------------------------------------
- * CREATE TABLE public.offers (
- *   id          bigserial PRIMARY KEY,
- *   title       text NOT NULL,
- *   subtitle    text,
- *   discount_pct numeric DEFAULT 0,
- *   code        text,
- *   valid_until date,
- *   bg_color    text DEFAULT '#1e293b',
- *   badge       text,
- *   is_active   boolean DEFAULT true,
- *   created_at  timestamptz DEFAULT now()
- * );
  */
 
 const emptyOffer = {
@@ -30,6 +14,7 @@ const emptyOffer = {
     valid_until:  '',
     bg_color:     '#1e293b',
     badge:        '',
+    image_url:    '',
     is_active:    true,
 };
 
@@ -41,6 +26,9 @@ const AdminOffers = () => {
     const [form, setForm] = useState(emptyOffer);
     const [saving, setSaving] = useState(false);
     const [msg, setMsg] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [dragging, setDragging] = useState(false);
+    const fileInputRef = useRef(null);
 
     const fetchOffers = async () => {
         setLoading(true);
@@ -62,6 +50,48 @@ const AdminOffers = () => {
 
     useEffect(() => { fetchOffers(); }, []);
 
+    const handleUpload = async (file) => {
+        if (!file) return;
+        setUploading(true);
+        setMsg(null);
+
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+            const filePath = `offers/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('promotions')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('promotions')
+                .getPublicUrl(filePath);
+
+            setForm(prev => ({ ...prev, image_url: publicUrl }));
+            setMsg({ type: 'success', text: 'Image uploaded!' });
+        } catch (err) {
+            setMsg({ type: 'error', text: 'Upload failed: ' + err.message });
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const onDrop = (e) => {
+        e.preventDefault();
+        setDragging(false);
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleUpload(e.dataTransfer.files[0]);
+        }
+    };
+
+    const onDragOver = (e) => {
+        e.preventDefault();
+        setDragging(true);
+    };
+
     const openCreate = () => { setForm(emptyOffer); setIsEditing(true); setMsg(null); };
     const openEdit   = (o)  => { setForm({ ...o, valid_until: o.valid_until?.split('T')[0] || '' }); setIsEditing(true); setMsg(null); };
 
@@ -78,6 +108,7 @@ const AdminOffers = () => {
             valid_until:  form.valid_until  || null,
             bg_color:     form.bg_color     || '#1e293b',
             badge:        form.badge        || null,
+            image_url:    form.image_url    || null,
             is_active:    form.is_active,
         };
 
@@ -110,7 +141,6 @@ const AdminOffers = () => {
 
     const isExpired = (dateStr) => dateStr && new Date(dateStr) < new Date();
 
-    /* ── Table not created ── */
     if (!tableExists) {
         return (
             <div className="animate-fade-in">
@@ -132,6 +162,7 @@ const AdminOffers = () => {
   valid_until date,
   bg_color    text DEFAULT '#1e293b',
   badge       text,
+  image_url   text,
   is_active   boolean DEFAULT true,
   created_at  timestamptz DEFAULT now()
 );`}</pre>
@@ -141,7 +172,6 @@ const AdminOffers = () => {
         );
     }
 
-    /* ── Edit / Create Form ── */
     if (isEditing) {
         return (
             <div className="animate-fade-in">
@@ -162,6 +192,42 @@ const AdminOffers = () => {
                                     <label className="admin-label">Subtitle / Description</label>
                                     <input className="admin-input" value={form.subtitle || ''} onChange={e => setForm({ ...form, subtitle: e.target.value })} placeholder="e.g. Up to 30% off on all dashcams" />
                                 </div>
+                                
+                                <div style={{ gridColumn: 'span 2' }}>
+                                    <label className="admin-label">Offer Image (Banner Background)</label>
+                                    <div 
+                                        className={`admin-dropzone ${dragging ? 'dragging' : ''}`}
+                                        onDragOver={onDragOver}
+                                        onDragLeave={() => setDragging(false)}
+                                        onDrop={onDrop}
+                                        onClick={() => fileInputRef.current.click()}
+                                    >
+                                        <input 
+                                            type="file" 
+                                            ref={fileInputRef} 
+                                            onChange={(e) => handleUpload(e.target.files[0])} 
+                                            style={{ display: 'none' }} 
+                                            accept="image/*"
+                                        />
+                                        {uploading ? (
+                                            <div className="admin-dropzone-text">Uploading image...</div>
+                                        ) : form.image_url ? (
+                                            <>
+                                                <img src={form.image_url} alt="Preview" className="admin-dropzone-preview" />
+                                                <div className="admin-dropzone-text">Click or drag to <span>replace</span></div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className="admin-dropzone-icon">🖼</div>
+                                                <div className="admin-dropzone-text">
+                                                    <span>Click to upload banner image</span> or drag and drop<br/>
+                                                    <small>(PNG, JPG, WEBP)</small>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+
                                 <div>
                                     <label className="admin-label">Discount %</label>
                                     <input type="number" min="0" max="100" className="admin-input" value={form.discount_pct} onChange={e => setForm({ ...form, discount_pct: e.target.value })} placeholder="e.g. 20" />
@@ -199,7 +265,7 @@ const AdminOffers = () => {
                             )}
 
                             <div style={{ display: 'flex', gap: '12px' }}>
-                                <button type="submit" className="admin-btn admin-btn-primary" disabled={saving}>
+                                <button type="submit" className="admin-btn admin-btn-primary" disabled={saving || uploading}>
                                     {saving ? 'Saving…' : (form.id ? 'Update Offer' : 'Create Offer')}
                                 </button>
                                 <button type="button" className="admin-btn admin-btn-outline" onClick={() => setIsEditing(false)}>Cancel</button>
@@ -207,7 +273,6 @@ const AdminOffers = () => {
                         </form>
                     </div>
 
-                    {/* Live Preview Card */}
                     <div>
                         <div style={{ fontSize: '0.68rem', color: 'var(--admin-text-muted)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '10px', fontWeight: 700 }}>Live Preview</div>
                         <OfferCard offer={form} preview />
@@ -217,7 +282,6 @@ const AdminOffers = () => {
         );
     }
 
-    /* ── List ── */
     return (
         <div className="animate-fade-in">
             <div className="admin-page-header">
@@ -261,7 +325,6 @@ const AdminOffers = () => {
     );
 };
 
-/* ── Offer Preview Card ────────────────────────────────────── */
 const OfferCard = ({ offer, preview }) => {
     const expired = offer.valid_until && new Date(offer.valid_until) < new Date();
 
@@ -271,15 +334,20 @@ const OfferCard = ({ offer, preview }) => {
             overflow: 'hidden',
             border: '1px solid rgba(255,255,255,0.1)',
             background: offer.bg_color || '#1e293b',
+            backgroundImage: offer.image_url ? `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${offer.image_url})` : 'none',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
             position: 'relative',
             minHeight: '140px',
             padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
         }}>
-            {/* Decorative glow */}
-            <div style={{ position: 'absolute', top: '-30px', right: '-30px', width: '120px', height: '120px', background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)', borderRadius: '50%' }} />
+            <div style={{ position: 'absolute', top: '-30px', right: '-30px', width: '120px', height: '120px', background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
 
             {offer.badge && (
-                <span style={{ display: 'inline-block', background: 'rgba(239,68,68,0.9)', color: 'white', fontSize: '0.6rem', fontWeight: 800, padding: '3px 8px', borderRadius: '4px', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px' }}>
+                <span style={{ alignSelf: 'flex-start', background: 'rgba(239,68,68,0.9)', color: 'white', fontSize: '0.6rem', fontWeight: 800, padding: '3px 8px', borderRadius: '4px', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px' }}>
                     {offer.badge}
                 </span>
             )}
@@ -288,7 +356,7 @@ const OfferCard = ({ offer, preview }) => {
                 {offer.title || 'Offer Title'}
             </h3>
             {offer.subtitle && (
-                <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.65)', marginBottom: '12px', lineHeight: 1.4 }}>{offer.subtitle}</p>
+                <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.8)', marginBottom: '12px', lineHeight: 1.4 }}>{offer.subtitle}</p>
             )}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
@@ -298,14 +366,14 @@ const OfferCard = ({ offer, preview }) => {
                     </span>
                 )}
                 {offer.code && (
-                    <span style={{ background: 'rgba(255,255,255,0.1)', border: '1px dashed rgba(255,255,255,0.3)', color: 'white', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.8rem', fontWeight: 700, padding: '4px 10px', borderRadius: '6px', letterSpacing: '1px' }}>
+                    <span style={{ background: 'rgba(255,255,255,0.15)', border: '1px dashed rgba(255,255,255,0.4)', color: 'white', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.8rem', fontWeight: 700, padding: '4px 10px', borderRadius: '6px', letterSpacing: '1px' }}>
                         {offer.code}
                     </span>
                 )}
             </div>
 
             {offer.valid_until && (
-                <div style={{ marginTop: '12px', fontSize: '0.68rem', color: expired ? '#ef4444' : 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ marginTop: '12px', fontSize: '0.68rem', color: expired ? '#ef4444' : 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     {expired ? '⚠ EXPIRED' : '⏳'} Valid until {new Date(offer.valid_until).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
             )}

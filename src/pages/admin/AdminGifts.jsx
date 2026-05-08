@@ -1,22 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import './AdminDashboard.css';
 
 /**
  * AdminGifts — Manage "gift with purchase" promotions.
- * Stores records in Supabase table: gift_items
- *
- * SQL to create table (run in Supabase SQL editor):
- * -------------------------------------------------
- * CREATE TABLE public.gift_items (
- *   id         bigserial PRIMARY KEY,
- *   title      text NOT NULL,
- *   description text,
- *   image_url  text,
- *   min_order  numeric DEFAULT 0,
- *   is_active  boolean DEFAULT true,
- *   created_at timestamptz DEFAULT now()
- * );
  */
 
 const emptyGift = {
@@ -35,6 +22,9 @@ const AdminGifts = () => {
     const [form, setForm] = useState(emptyGift);
     const [saving, setSaving] = useState(false);
     const [msg, setMsg] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [dragging, setDragging] = useState(false);
+    const fileInputRef = useRef(null);
 
     const fetchGifts = async () => {
         setLoading(true);
@@ -55,6 +45,48 @@ const AdminGifts = () => {
     };
 
     useEffect(() => { fetchGifts(); }, []);
+
+    const handleUpload = async (file) => {
+        if (!file) return;
+        setUploading(true);
+        setMsg(null);
+
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+            const filePath = `gifts/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('promotions') // Ensure this bucket exists or create it
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('promotions')
+                .getPublicUrl(filePath);
+
+            setForm(prev => ({ ...prev, image_url: publicUrl }));
+            setMsg({ type: 'success', text: 'Image uploaded!' });
+        } catch (err) {
+            setMsg({ type: 'error', text: 'Upload failed: ' + err.message });
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const onDrop = (e) => {
+        e.preventDefault();
+        setDragging(false);
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleUpload(e.dataTransfer.files[0]);
+        }
+    };
+
+    const onDragOver = (e) => {
+        e.preventDefault();
+        setDragging(true);
+    };
 
     const openCreate = () => {
         setForm(emptyGift);
@@ -108,7 +140,6 @@ const AdminGifts = () => {
         if (!error) fetchGifts();
     };
 
-    /* ── Table not created yet ── */
     if (!tableExists) {
         return (
             <div className="animate-fade-in">
@@ -119,26 +150,14 @@ const AdminGifts = () => {
                     <h3 style={{ color: 'var(--admin-warning)', marginBottom: '12px' }}>⚠ Database Table Required</h3>
                     <p style={{ color: 'var(--admin-text-muted)', marginBottom: '16px', fontSize: '0.875rem', lineHeight: 1.6 }}>
                         The <code style={{ color: 'var(--admin-accent)', background: 'rgba(79,142,247,0.1)', padding: '2px 6px', borderRadius: '4px' }}>gift_items</code> table doesn't exist yet.
-                        Run the following SQL in your Supabase SQL Editor:
+                        Run the SQL in your Supabase SQL Editor.
                     </p>
-                    <pre style={{ background: 'rgba(0,0,0,0.5)', padding: '16px', borderRadius: '10px', fontSize: '0.78rem', color: '#a3e635', overflowX: 'auto', lineHeight: 1.7 }}>{`CREATE TABLE public.gift_items (
-  id         bigserial PRIMARY KEY,
-  title      text NOT NULL,
-  description text,
-  image_url  text,
-  min_order  numeric DEFAULT 0,
-  is_active  boolean DEFAULT true,
-  created_at timestamptz DEFAULT now()
-);`}</pre>
-                    <button className="admin-btn admin-btn-primary" style={{ marginTop: '16px' }} onClick={fetchGifts}>
-                        ↺ Retry
-                    </button>
+                    <button className="admin-btn admin-btn-primary" onClick={fetchGifts}>↺ Retry</button>
                 </div>
             </div>
         );
     }
 
-    /* ── Edit / Create Form ── */
     if (isEditing) {
         return (
             <div className="animate-fade-in">
@@ -156,10 +175,42 @@ const AdminGifts = () => {
                             <label className="admin-label">Description</label>
                             <textarea className="admin-input" rows={3} value={form.description || ''} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Short description of the gift item…" />
                         </div>
+                        
                         <div>
-                            <label className="admin-label">Image URL (optional)</label>
-                            <input className="admin-input" value={form.image_url || ''} onChange={e => setForm({ ...form, image_url: e.target.value })} placeholder="https://…" />
+                            <label className="admin-label">Gift Image</label>
+                            <div 
+                                className={`admin-dropzone ${dragging ? 'dragging' : ''}`}
+                                onDragOver={onDragOver}
+                                onDragLeave={() => setDragging(false)}
+                                onDrop={onDrop}
+                                onClick={() => fileInputRef.current.click()}
+                            >
+                                <input 
+                                    type="file" 
+                                    ref={fileInputRef} 
+                                    onChange={(e) => handleUpload(e.target.files[0])} 
+                                    style={{ display: 'none' }} 
+                                    accept="image/*"
+                                />
+                                {uploading ? (
+                                    <div className="admin-dropzone-text">Uploading image...</div>
+                                ) : form.image_url ? (
+                                    <>
+                                        <img src={form.image_url} alt="Preview" className="admin-dropzone-preview" />
+                                        <div className="admin-dropzone-text">Click or drag to <span>replace</span></div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="admin-dropzone-icon">🖼</div>
+                                        <div className="admin-dropzone-text">
+                                            <span>Click to upload</span> or drag and drop<br/>
+                                            <small>(PNG, JPG, WEBP)</small>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
                         </div>
+
                         <div>
                             <label className="admin-label">Minimum Order Value (৳)</label>
                             <input type="number" className="admin-input" value={form.min_order} onChange={e => setForm({ ...form, min_order: e.target.value })} placeholder="0 = always offered" />
@@ -176,7 +227,7 @@ const AdminGifts = () => {
                         )}
 
                         <div style={{ display: 'flex', gap: '12px', paddingTop: '8px' }}>
-                            <button type="submit" className="admin-btn admin-btn-primary" disabled={saving}>
+                            <button type="submit" className="admin-btn admin-btn-primary" disabled={saving || uploading}>
                                 {saving ? 'Saving…' : (form.id ? 'Update Gift' : 'Create Gift')}
                             </button>
                             <button type="button" className="admin-btn admin-btn-outline" onClick={() => setIsEditing(false)}>Cancel</button>
@@ -187,7 +238,6 @@ const AdminGifts = () => {
         );
     }
 
-    /* ── List ── */
     return (
         <div className="animate-fade-in">
             <div className="admin-page-header">

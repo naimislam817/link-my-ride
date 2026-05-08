@@ -128,132 +128,6 @@ const OrderNoteEditor = ({ orderId, initialNote, onSaved }) => {
     );
 };
 
-/* ── Tiny SVG Bar Chart ─────────────────────────────────────── */
-const BarChart = ({ data, label, color = 'var(--admin-accent)' }) => {
-    const max = Math.max(...data.map(d => d.value), 1);
-    const W = 480, H = 120, PAD = 36, BAR_GAP = 6;
-    const barW = (W - PAD * 2 - BAR_GAP * (data.length - 1)) / Math.max(data.length, 1);
-
-    return (
-        <div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--admin-text-muted)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '10px', fontWeight: 700 }}>{label}</div>
-            <svg viewBox={`0 0 ${W} ${H + 28}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
-                {/* Grid lines */}
-                {[0, 0.25, 0.5, 0.75, 1].map((frac, i) => (
-                    <line key={i} x1={PAD} y1={PAD + (1 - frac) * (H - PAD)} x2={W - PAD} y2={PAD + (1 - frac) * (H - PAD)}
-                        stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
-                ))}
-                {/* Bars */}
-                {data.map((d, i) => {
-                    const barH = max > 0 ? ((d.value / max) * (H - PAD)) : 0;
-                    const x = PAD + i * (barW + BAR_GAP);
-                    const y = PAD + (H - PAD) - barH;
-                    return (
-                        <g key={i}>
-                            <rect x={x} y={y} width={barW} height={barH} rx="4" fill={color} opacity="0.85" />
-                            {/* Value on top */}
-                            {d.value > 0 && (
-                                <text x={x + barW / 2} y={y - 4} textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.6)">{d.value}</text>
-                            )}
-                            {/* Label below */}
-                            <text x={x + barW / 2} y={H + 18} textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.35)">{d.label}</text>
-                        </g>
-                    );
-                })}
-            </svg>
-        </div>
-    );
-};
-
-/* ── Line Sparkline ─────────────────────────────────────────── */
-const LineChart = ({ data, label, color = '#10b981' }) => {
-    const max = Math.max(...data.map(d => d.value), 1);
-    const W = 480, H = 120, PAD = 36;
-    const stepX = (W - PAD * 2) / Math.max(data.length - 1, 1);
-
-    const points = data.map((d, i) => ({
-        x: PAD + i * stepX,
-        y: PAD + (1 - d.value / max) * (H - PAD),
-    }));
-
-    const polyline = points.map(p => `${p.x},${p.y}`).join(' ');
-    const area = points.length > 1
-        ? `M${points[0].x},${H} ` + points.map(p => `L${p.x},${p.y}`).join(' ') + ` L${points[points.length - 1].x},${H} Z`
-        : '';
-
-    return (
-        <div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--admin-text-muted)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '10px', fontWeight: 700 }}>{label}</div>
-            <svg viewBox={`0 0 ${W} ${H + 28}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
-                <defs>
-                    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={color} stopOpacity="0.3" />
-                        <stop offset="100%" stopColor={color} stopOpacity="0" />
-                    </linearGradient>
-                </defs>
-                {/* Area fill */}
-                {area && <path d={area} fill="url(#areaGrad)" />}
-                {/* Line */}
-                {points.length > 1 && (
-                    <polyline points={polyline} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-                )}
-                {/* Dots + labels */}
-                {points.map((p, i) => (
-                    <g key={i}>
-                        <circle cx={p.x} cy={p.y} r="3" fill={color} />
-                        <text x={PAD + i * stepX} y={H + 18} textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.35)">{data[i].label}</text>
-                    </g>
-                ))}
-            </svg>
-        </div>
-    );
-};
-
-/* ── Helpers ────────────────────────────────────────────────── */
-const getLast7Days = (orders) => {
-    const days = [];
-    for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const label = d.toLocaleDateString('en-US', { weekday: 'short' });
-        const dateStr = d.toISOString().split('T')[0];
-        const value = orders.filter(o => o.created_at?.startsWith(dateStr)).length;
-        days.push({ label, value });
-    }
-    return days;
-};
-
-const getLast7Revenue = (orders) => {
-    const days = [];
-    for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const label = d.toLocaleDateString('en-US', { weekday: 'short' });
-        const dateStr = d.toISOString().split('T')[0];
-        const value = orders
-            .filter(o => o.created_at?.startsWith(dateStr))
-            .reduce((sum, o) => sum + (o.total_amount || 0), 0);
-        days.push({ label, value: Math.round(value / 100) }); // scale to hundreds
-    }
-    return days;
-};
-
-const getLast6Months = (orders) => {
-    const months = [];
-    for (let i = 5; i >= 0; i--) {
-        const d = new Date();
-        d.setMonth(d.getMonth() - i);
-        const label = d.toLocaleDateString('en-US', { month: 'short' });
-        const y = d.getFullYear(), m = d.getMonth();
-        const value = orders.filter(o => {
-            const od = new Date(o.created_at);
-            return od.getFullYear() === y && od.getMonth() === m;
-        }).length;
-        months.push({ label, value });
-    }
-    return months;
-};
-
 /* ── Main Component ─────────────────────────────────────────── */
 const AdminOrders = () => {
     const { orders, fetchOrders, loading } = useShop();
@@ -264,8 +138,6 @@ const AdminOrders = () => {
     const [sortOrder, setSortOrder]     = useState('desc');
     const [statusFilter, setStatusFilter] = useState('all');
     const [expandedOrder, setExpandedOrder] = useState(null);
-    const [chartTab, setChartTab]       = useState('daily'); // daily | revenue | monthly
-    // Track unsaved-note state per order so the icon updates without re-fetching
     const [localNotes, setLocalNotes]   = useState({});
 
     const handleNoteSaved = useCallback((orderId, noteText) => {
@@ -318,12 +190,6 @@ const AdminOrders = () => {
         else fetchOrders();
     };
 
-    const chartData = useMemo(() => ({
-        daily:   getLast7Days(orders),
-        revenue: getLast7Revenue(orders),
-        monthly: getLast6Months(orders),
-    }), [orders]);
-
     const pendingCount   = orders.filter(o => o.status === 'pending').length;
     const completedCount = orders.filter(o => o.status === 'completed').length;
     const totalRevenue   = orders.reduce((s, o) => s + (o.total_amount || 0), 0);
@@ -361,30 +227,6 @@ const AdminOrders = () => {
                 ))}
             </div>
 
-            {/* ── Analytics Charts ──────────────────────────── */}
-            <div className="admin-card" style={{ marginBottom: '24px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
-                    <h3 style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '1.5px', color: 'var(--admin-text-dim)', textTransform: 'uppercase' }}>
-                        Sales Analytics
-                    </h3>
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                        {[
-                            { key: 'daily', label: 'Orders / Day' },
-                            { key: 'revenue', label: 'Revenue / Day' },
-                            { key: 'monthly', label: 'Orders / Month' },
-                        ].map(t => (
-                            <button key={t.key} onClick={() => setChartTab(t.key)}
-                                className={`admin-btn admin-btn-sm ${chartTab === t.key ? 'admin-btn-primary' : 'admin-btn-outline'}`}>
-                                {t.label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                {chartTab === 'daily' && <BarChart data={chartData.daily} label="Orders per day (last 7 days)" color="var(--admin-accent)" />}
-                {chartTab === 'revenue' && <LineChart data={chartData.revenue} label="Revenue per day ×100 BDT (last 7 days)" color="#a78bfa" />}
-                {chartTab === 'monthly' && <BarChart data={chartData.monthly} label="Orders per month (last 6 months)" color="#10b981" />}
-            </div>
 
             {/* ── Filters ───────────────────────────────────── */}
             <div className="admin-card" style={{ marginBottom: '20px', padding: '16px 20px' }}>

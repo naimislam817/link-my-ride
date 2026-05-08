@@ -11,17 +11,17 @@ const Home = () => {
     return (
         <div className="home-page">
             <HeroSection />
-            <div className="bg-white" style={{ paddingBottom: '80px' }}>
+            <div style={{ paddingBottom: '80px', background: 'var(--bg-primary)' }}>
                 <div className="promotions-row">
                     <FreeGiftsSection />
                     <OffersSection />
                 </div>
             </div>
-            <div className="bg-gray">
+            <div style={{ background: 'var(--bg-secondary)', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                 <GadgetsSection />
             </div>
             <PromoBanner />
-            <div className="bg-white">
+            <div>
                 <WhyChooseUs />
             </div>
         </div>
