@@ -3,146 +3,178 @@ import AdminProducts from './AdminProducts';
 import AdminOrders from './AdminOrders';
 import AdminLogin from './AdminLogin';
 import AdminSettings from './AdminSettings';
-import { supabase } from '../../lib/supabase';
-
 import AdminOverview from './AdminOverview';
+import AdminGifts from './AdminGifts';
+import AdminOffers from './AdminOffers';
+import { supabase } from '../../lib/supabase';
 import './AdminDashboard.css';
 
+const NAV_ITEMS = [
+  { id: 'overview',  label: 'Overview',    icon: '▦' },
+  { id: 'orders',    label: 'Orders',      icon: '◈' },
+  { id: 'products',  label: 'Products',    icon: '⬡' },
+  { id: 'gifts',     label: 'Gift Items',  icon: '🎁' },
+  { id: 'offers',    label: 'Offers',      icon: '🏷️' },
+  { id: 'settings',  label: 'Settings',    icon: '⚙' },
+];
+
+const PAGE_TITLES = {
+  overview:  'System Overview',
+  orders:    'Order Management',
+  products:  'Product Catalog',
+  gifts:     'Gift Items',
+  offers:    'Current Offers',
+  settings:  'System Settings',
+};
+
 const AdminLayout = () => {
-    const [user, setUser] = useState(null);
-    const [currentView, setCurrentView] = useState('overview');
-    const [loadingAuth, setLoadingAuth] = useState(true);
+  const [user, setUser]               = useState(null);
+  const [currentView, setCurrentView] = useState('overview');
+  const [loadingAuth, setLoadingAuth] = useState(true);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-    useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
-            setLoadingAuth(false);
-        });
+  // Auth listener
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setLoadingAuth(false);
+    });
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-        });
-
-        return () => subscription.unsubscribe();
-    }, []);
-
-    const handleLogout = async () => {
-        await supabase.auth.signOut();
-    };
-
-    if (loadingAuth) return <div className="admin-loading">Authenticating Nexus...</div>;
-    if (!user) return <AdminLogin />;
-
-    const renderView = () => {
-        switch (currentView) {
-            case 'overview': return <AdminOverview />;
-            case 'products': return <AdminProducts />;
-            case 'orders': return <AdminOrders />;
-            case 'settings': return <AdminSettings />;
-            default: return <AdminOverview />;
-        }
-    };
-
-    return (
-        <div className="admin-dashboard-container">
-            <div style={{ display: 'flex', minHeight: '100vh' }}>
-                {/* Sidebar */}
-                <aside style={{ 
-                    width: '280px', 
-                    background: 'rgba(15, 17, 26, 0.95)', 
-                    borderRight: '1px solid var(--admin-border)',
-                    padding: '40px 20px',
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}>
-                    <div style={{ padding: '0 20px', marginBottom: '40px' }}>
-                        <h2 style={{ fontSize: '1.2rem', fontWeight: 900, letterSpacing: '2px', color: 'var(--admin-accent)' }}>LINKMYRIDE</h2>
-                        <span style={{ fontSize: '0.65rem', color: 'var(--admin-text-muted)', letterSpacing: '1px' }}>ADMIN COMMAND CENTER</span>
-                    </div>
-
-                    <nav style={{ flex: 1 }}>
-                        <ul style={{ listStyle: 'none', padding: 0 }}>
-                            <li 
-                                className={`sidebar-link ${currentView === 'overview' ? 'active' : ''}`}
-                                onClick={() => setCurrentView('overview')}
-                            >
-                                <span className="sidebar-icon">📊</span> Overview
-                            </li>
-                            <li 
-                                className={`sidebar-link ${currentView === 'products' ? 'active' : ''}`}
-                                onClick={() => setCurrentView('products')}
-                            >
-                                <span className="sidebar-icon">📦</span> Products
-                            </li>
-                            <li 
-                                className={`sidebar-link ${currentView === 'orders' ? 'active' : ''}`}
-                                onClick={() => setCurrentView('orders')}
-                            >
-                                <span className="sidebar-icon">📋</span> Orders
-                            </li>
-                            <li 
-                                className={`sidebar-link ${currentView === 'settings' ? 'active' : ''}`}
-                                onClick={() => setCurrentView('settings')}
-                            >
-                                <span className="sidebar-icon">⚙️</span> Settings
-                            </li>
-                        </ul>
-                    </nav>
-
-                    <div style={{ marginTop: 'auto', padding: '20px' }}>
-                        <div style={{ marginBottom: '15px', fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>
-                            Logged in as:<br/>
-                            <span style={{ color: 'white' }}>{user.email}</span>
-                        </div>
-                        <button onClick={handleLogout} className="admin-btn admin-btn-outline" style={{ width: '100%', justifyContent: 'center' }}>
-                            🚪 Logout
-                        </button>
-                    </div>
-                </aside>
-
-                {/* Main Content */}
-                <main style={{ flex: 1, padding: '40px', overflowY: 'auto' }}>
-                    {renderView()}
-                </main>
-            </div>
-
-            <style jsx>{`
-                .sidebar-link {
-                    padding: 14px 20px;
-                    border-radius: 12px;
-                    margin-bottom: 8px;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    color: var(--admin-text-muted);
-                    font-weight: 500;
-                }
-                .sidebar-link:hover {
-                    background: rgba(255, 255, 255, 0.05);
-                    color: white;
-                }
-                .sidebar-link.active {
-                    background: var(--admin-accent);
-                    color: white;
-                    box-shadow: 0 4px 15px var(--admin-accent-glow);
-                }
-                .sidebar-icon {
-                    font-size: 1.1rem;
-                }
-                .admin-btn-outline {
-                    background: transparent;
-                    border: 1px solid var(--admin-border);
-                    color: var(--admin-text);
-                }
-                .admin-btn-outline:hover {
-                    background: rgba(255, 255, 255, 0.05);
-                    border-color: var(--admin-accent);
-                }
-            `}</style>
-        </div>
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => setUser(session?.user ?? null)
     );
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Live clock
+  useEffect(() => {
+    const id = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
+  const renderView = () => {
+    switch (currentView) {
+      case 'overview':  return <AdminOverview />;
+      case 'products':  return <AdminProducts />;
+      case 'orders':    return <AdminOrders />;
+      case 'gifts':     return <AdminGifts />;
+      case 'offers':    return <AdminOffers />;
+      case 'settings':  return <AdminSettings />;
+      default:          return <AdminOverview />;
+    }
+  };
+
+  const avatarLetter = user?.email?.[0]?.toUpperCase() ?? 'A';
+  const formattedTime = currentTime.toLocaleTimeString('en-US', {
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+  });
+  const formattedDate = currentTime.toLocaleDateString('en-US', {
+    weekday: 'short', month: 'short', day: 'numeric'
+  });
+
+  if (loadingAuth) return <div className="admin-loading">Authenticating…</div>;
+  if (!user)       return <AdminLogin />;
+
+  return (
+    <div className="admin-root">
+
+      {/* ── Sidebar ──────────────────────────────────────── */}
+      <aside className="admin-sidebar">
+
+        {/* Logo */}
+        <div className="admin-sidebar-logo">
+          <div className="admin-logo-icon">⚡</div>
+          <div className="admin-logo-text">
+            <span className="admin-logo-name">LINKMYRIDE</span>
+            <span className="admin-logo-sub">Command Center</span>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="admin-sidebar-nav">
+          <div className="admin-nav-section-label">Navigation</div>
+          {NAV_ITEMS.map(item => (
+            <div
+              key={item.id}
+              className={`admin-nav-item ${currentView === item.id ? 'active' : ''}`}
+              onClick={() => setCurrentView(item.id)}
+            >
+              <span className="admin-nav-icon">{item.icon}</span>
+              {item.label}
+            </div>
+          ))}
+
+          {/* Clock widget */}
+          <div style={{
+            marginTop: '28px',
+            padding: '14px',
+            borderRadius: '10px',
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid var(--admin-border)',
+          }}>
+            <div style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '1.35rem',
+              fontWeight: 700,
+              color: 'white',
+              letterSpacing: '2px',
+              lineHeight: 1,
+              marginBottom: '4px',
+            }}>{formattedTime}</div>
+            <div style={{
+              fontSize: '0.65rem',
+              color: 'var(--admin-text-muted)',
+              letterSpacing: '1px',
+            }}>{formattedDate}</div>
+          </div>
+        </nav>
+
+        {/* User footer */}
+        <div className="admin-sidebar-footer">
+          <div className="admin-user-card">
+            <div className="admin-user-avatar">{avatarLetter}</div>
+            <div className="admin-user-info">
+              <div className="admin-user-role">Administrator</div>
+              <div className="admin-user-email">{user.email}</div>
+            </div>
+          </div>
+          <button
+            className="admin-btn admin-btn-outline"
+            onClick={handleLogout}
+            style={{ width: '100%', justifyContent: 'center', fontSize: '0.78rem' }}
+          >
+            ↩ Sign Out
+          </button>
+        </div>
+      </aside>
+
+      {/* ── Main ─────────────────────────────────────────── */}
+      <div className="admin-main">
+
+        {/* Top Bar */}
+        <header className="admin-topbar">
+          <div className="admin-topbar-left">
+            <span className="admin-topbar-title">{PAGE_TITLES[currentView]}</span>
+            <span className="admin-topbar-breadcrumb">
+              admin / {currentView}
+            </span>
+          </div>
+          <div className="admin-topbar-right">
+            <span className="admin-status-dot">SYSTEM ONLINE</span>
+          </div>
+        </header>
+
+        {/* Page Content */}
+        <main className="admin-content">
+          {renderView()}
+        </main>
+      </div>
+    </div>
+  );
 };
 
 export default AdminLayout;

@@ -30,10 +30,10 @@ const AdminSettings = () => {
     };
 
     return (
-        <div className="admin-overview animate-fade-in">
-            <h1 className="admin-page-title" style={{ marginBottom: '32px' }}>
-                SYSTEM <span style={{ color: 'var(--admin-accent)' }}>SETTINGS</span>
-            </h1>
+        <div className="animate-fade-in">
+            <div className="admin-page-header">
+                <h1 className="admin-page-title">System <span>Settings</span></h1>
+            </div>
 
             {settingsError && settingsError.includes('relation "public.settings" does not exist') && (
                 <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid var(--admin-danger)', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>

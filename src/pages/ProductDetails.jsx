@@ -206,9 +206,7 @@ const ProductDetails = () => {
                             <span className="stars">★★★★★</span>
                             <span className="rating-text">4.9 (248 Reviews)</span>
                         </div>
-                        <p className="product-description">
-                            {product.description || product.desc}
-                        </p>
+
 
                         <div className="product-features-grid">
                             {Array.isArray(product.features) && product.features.map((feat, i) => (
@@ -333,9 +331,15 @@ const ProductDetails = () => {
                                 </div>
                                 <div className="product-info">
                                     <h3 className="product-name">{p.name}</h3>
-                                    <p className="product-desc" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.desc || p.description}</p>
                                     <div className="product-footer" style={{ marginTop: 'auto', paddingTop: '15px' }}>
-                                        <span className="product-price">৳{Number(p.price || 0).toLocaleString()}</span>
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                            {p.old_price && (
+                                                <span style={{ textDecoration: 'line-through', color: '#999', fontSize: '0.85rem' }}>
+                                                    ৳{Number(p.old_price).toLocaleString()}
+                                                </span>
+                                            )}
+                                            <span className="product-price">৳{Number(p.price || 0).toLocaleString()}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

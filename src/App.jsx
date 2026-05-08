@@ -69,6 +69,12 @@ function App() {
     return <Home />;
   };
 
+  const isAdminRoute = currentRoute.startsWith('#admin');
+
+  if (isAdminRoute) {
+    return <AdminLayout />;
+  }
+
   return (
     <div className="app-container">
       <Navbar />
