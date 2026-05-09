@@ -204,7 +204,13 @@ export const ShopProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (products.length > 0) fetchOrders();
+    const checkAuthAndFetch = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && products.length > 0) {
+        fetchOrders();
+      }
+    };
+    checkAuthAndFetch();
   }, [products]);
 
   const getAnalytics = () => {

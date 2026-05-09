@@ -99,10 +99,10 @@ const ProductDetails = () => {
                 status: 'pending'
             };
 
-            const { data, error } = await supabase.from('orders').insert([orderData]).select();
+            const { error } = await supabase.from('orders').insert([orderData]);
             if (error) throw error;
 
-            const invId = data?.[0]?.id || Math.floor(Math.random() * 10000);
+            const invId = Math.floor(10000 + Math.random() * 90000);
             setGeneratedInvoice(`LMR-${String(invId).padStart(5, '0')}`);
 
             setShowSuccess(true);
@@ -348,7 +348,7 @@ const ProductDetails = () => {
                 </section>
             )}
 
-            <style jsx>{`
+            <style>{`
                 .success-popup {
                     position: fixed;
                     top: 0; left: 0; right: 0; bottom: 0;

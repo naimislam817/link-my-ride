@@ -18,7 +18,7 @@ const Checkout = () => {
         setStatus('submitting');
         
         try {
-            const { data, error } = await supabase.from('orders').insert([{
+            const { error } = await supabase.from('orders').insert([{
                 customer_name: formData.name,
                 customer_phone: formData.phone,
                 customer_email: formData.email,
@@ -26,11 +26,11 @@ const Checkout = () => {
                 total_amount: total,
                 items: cart,
                 status: 'pending'
-            }]).select();
+            }]);
             
             if (error) throw error;
             
-            const invId = data?.[0]?.id || Math.floor(Math.random() * 10000);
+            const invId = Math.floor(10000 + Math.random() * 90000);
             setInvoiceNumber(`LMR-${String(invId).padStart(5, '0')}`);
             clearCart();
             setStatus('success');
@@ -152,7 +152,7 @@ const Checkout = () => {
                 </div>
             )}
 
-            <style jsx>{`
+            <style>{`
                 .checkout-page {
                     max-width: 1200px;
                     margin: 0 auto;
