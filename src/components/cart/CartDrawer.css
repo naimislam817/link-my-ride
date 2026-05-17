@@ -249,3 +249,47 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
 }
+
+@media (max-width: 480px) {
+    .cart-drawer {
+        max-width: 100%;
+        right: -100%;
+    }
+
+    .cart-header {
+        padding: 16px 18px;
+    }
+
+    .cart-content {
+        padding: 16px 18px;
+    }
+
+    .cart-footer {
+        padding: 18px;
+    }
+
+    .cart-item {
+        gap: 12px;
+    }
+
+    .cart-item-img {
+        width: 64px;
+        height: 64px;
+    }
+
+    .quantity-controls button {
+        width: 36px;
+        height: 36px;
+    }
+
+    .remove-btn {
+        font-size: 0.8rem;
+        padding: 4px 0;
+    }
+
+    .checkout-btn {
+        padding: 16px;
+        font-size: 1rem;
+    }
+}
+

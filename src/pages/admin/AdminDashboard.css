@@ -879,3 +879,288 @@
   margin-top: 10px;
   border: 1px solid var(--admin-border);
 }
+
+/* ── Hamburger Button (hidden on desktop) ────────────────────── */
+.admin-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  padding: 6px;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.admin-hamburger:hover {
+  border-color: var(--admin-accent);
+  background: rgba(79,142,247,0.08);
+}
+
+.admin-hamburger span {
+  display: block;
+  height: 2px;
+  background: var(--admin-text);
+  border-radius: 2px;
+  width: 100%;
+  transition: var(--transition);
+}
+
+/* ── Mobile Overlay ──────────────────────────────────────────── */
+.admin-mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 998;
+  backdrop-filter: blur(2px);
+}
+
+/* ── Mobile Responsive Breakpoints ──────────────────────────── */
+@media (max-width: 900px) {
+
+  /* Show hamburger */
+  .admin-hamburger {
+    display: flex;
+  }
+
+  /* Show overlay when sidebar is open */
+  .admin-mobile-overlay {
+    display: block;
+  }
+
+  /* Topbar: make room for hamburger */
+  .admin-topbar {
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  .admin-topbar-left {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .admin-topbar-title {
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .admin-topbar-breadcrumb {
+    display: none;
+  }
+
+  .admin-status-dot {
+    font-size: 0;  /* hide text, keep dot */
+  }
+
+  /* Sidebar: hidden off-screen by default, slides in on .mobile-open */
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 260px;
+    height: 100vh;
+    z-index: 999;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+  }
+
+  .admin-sidebar.mobile-open {
+    left: 0;
+  }
+
+  /* Main content takes full width */
+  .admin-main {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Content padding */
+  .admin-content {
+    padding: 20px 16px;
+  }
+
+  /* Page header stacks on small screens */
+  .admin-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .admin-page-title {
+    font-size: 1.3rem;
+  }
+
+  /* Metrics grid: 2 columns */
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  /* Cards */
+  .admin-card {
+    padding: 18px 16px;
+  }
+
+  /* Image preview grid: 3 columns on tablet */
+  .image-preview-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Tables: allow horizontal scroll */
+  .admin-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 600px) {
+
+  /* Metrics: single column on phones */
+  .metrics-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .metric-value {
+    font-size: 1.3rem;
+  }
+
+  .metric-label {
+    font-size: 0.65rem;
+  }
+
+  /* Content padding */
+  .admin-content {
+    padding: 16px 12px;
+  }
+
+  /* Cards compact */
+  .admin-card {
+    padding: 14px 12px;
+    border-radius: var(--radius-md);
+  }
+
+  /* Image preview: 3 columns */
+  .image-preview-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  /* Table cells compact */
+  .admin-table td,
+  .admin-table thead th {
+    padding: 10px 10px;
+    font-size: 0.8rem;
+  }
+
+  /* Buttons: smaller on mobile */
+  .admin-btn {
+    padding: 8px 14px;
+    font-size: 0.75rem;
+  }
+
+  .admin-btn-lg {
+    padding: 11px 20px;
+    font-size: 0.85rem;
+  }
+
+  /* Page header */
+  .admin-page-header {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .admin-page-title {
+    font-size: 1.15rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .metrics-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-content {
+    padding: 14px 10px;
+  }
+
+  .metric-value {
+    font-size: 1.3rem;
+  }
+
+  .image-preview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── Overview: bottom grid (Recent Orders + Top Products) ───────── */
+.overview-bottom-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 20px;
+}
+
+/* ── Orders: quick stats bar ─────────────────────────────────────── */
+.orders-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+/* ── Orders: expanded order detail (3 cols) ─────────────────────── */
+.order-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+}
+
+/* ── Mobile overrides ────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .overview-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .orders-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .order-detail-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .orders-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .orders-stats-grid .admin-card {
+    padding: 12px 14px;
+  }
+
+  .order-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}

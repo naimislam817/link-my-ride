@@ -173,7 +173,27 @@
     }
 
     .cart-add-btn {
-        width: 30px;
-        height: 30px;
+        width: 36px;
+        height: 36px;
     }
 }
+
+@media (max-width: 390px) {
+    .gadgets-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .product-img-wrapper {
+        height: 180px;
+        padding: 16px;
+    }
+
+    .product-name {
+        font-size: 1rem;
+    }
+
+    .product-price {
+        font-size: 1.1rem;
+    }
+}

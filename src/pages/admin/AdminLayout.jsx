@@ -32,6 +32,7 @@ const AdminLayout = () => {
   const [currentView, setCurrentView] = useState('overview');
   const [loadingAuth, setLoadingAuth] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Auth listener
   useEffect(() => {
@@ -82,8 +83,16 @@ const AdminLayout = () => {
   return (
     <div className="admin-root">
 
+      {/* ── Mobile Overlay ───────────────────────────────── */}
+      {isSidebarOpen && (
+        <div
+          className="admin-mobile-overlay"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* ── Sidebar ──────────────────────────────────────── */}
-      <aside className="admin-sidebar">
+      <aside className={`admin-sidebar ${isSidebarOpen ? 'mobile-open' : ''}`}>
 
         {/* Logo */}
         <div className="admin-sidebar-logo">
@@ -101,7 +110,10 @@ const AdminLayout = () => {
             <div
               key={item.id}
               className={`admin-nav-item ${currentView === item.id ? 'active' : ''}`}
-              onClick={() => setCurrentView(item.id)}
+              onClick={() => {
+                setCurrentView(item.id);
+                setIsSidebarOpen(false); // close on mobile
+              }}
             >
               <span className="admin-nav-icon">{item.icon}</span>
               {item.label}
@@ -158,6 +170,14 @@ const AdminLayout = () => {
         {/* Top Bar */}
         <header className="admin-topbar">
           <div className="admin-topbar-left">
+            {/* Hamburger — mobile only */}
+            <button
+              className="admin-hamburger"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              aria-label="Toggle sidebar"
+            >
+              <span /><span /><span />
+            </button>
             <span className="admin-topbar-title">{PAGE_TITLES[currentView]}</span>
             <span className="admin-topbar-breadcrumb">
               admin / {currentView}

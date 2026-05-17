@@ -85,7 +85,57 @@
 }
 
 @media (max-width: 600px) {
+    .catalog-page {
+        padding-top: 24px;
+        padding-bottom: 50px;
+    }
+
+    .catalog-header {
+        margin-bottom: 24px;
+    }
+
+    .catalog-title {
+        font-size: 2rem;
+    }
+
+    .catalog-desc {
+        font-size: 0.95rem;
+    }
+
+    .catalog-filters {
+        gap: 8px;
+        margin-bottom: 30px;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .catalog-filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-btn {
+        flex-shrink: 0;
+        padding: 8px 18px;
+        font-size: 0.75rem;
+    }
+
     .catalog-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
 }
+
+@media (max-width: 390px) {
+    .catalog-title {
+        font-size: 1.7rem;
+    }
+
+    .catalog-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+}

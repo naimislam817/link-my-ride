@@ -122,7 +122,7 @@ const AdminOverview = () => {
     <div className="animate-fade-in">
 
       {/* ── Metric Cards ─── */}
-      <div className="metrics-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+      <div className="metrics-grid">
         {[
           { icon: '💰', label: 'Total Revenue',   value: `৳${totalRevenue.toLocaleString()}`,   sub: '↑ Lifetime', subColor: 'var(--admin-success)' },
           { icon: '📦', label: 'Total Orders',    value: totalOrders,                           sub: `${pendingCount} pending`, subColor: 'var(--admin-warning)' },
@@ -133,7 +133,7 @@ const AdminOverview = () => {
             <div className="metric-icon">{m.icon}</div>
             <div>
               <div className="metric-label">{m.label}</div>
-              <div className="metric-value" style={{ fontSize: '1.6rem' }}>{m.value}</div>
+              <div className="metric-value">{m.value}</div>
             </div>
             <div className="metric-sub" style={{ color: m.subColor }}>{m.sub}</div>
           </div>
@@ -165,7 +165,7 @@ const AdminOverview = () => {
       </div>
 
       {/* ── Recent Orders + Top Products ─── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '20px' }}>
+      <div className="overview-bottom-grid">
 
         <div className="admin-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>

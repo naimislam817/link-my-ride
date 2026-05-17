@@ -35,6 +35,7 @@ const AdminProducts = () => {
             description: '',
             is_active: true,
             badge: '',
+            stock: 0,
             specs: [],
             features: []
         });
@@ -209,6 +210,7 @@ const AdminProducts = () => {
             description: currentProduct.description,
             is_active: currentProduct.is_active,
             badge: currentProduct.badge || null,
+            stock: Number(currentProduct.stock) || 0,
             specs: JSON.stringify(specsToSave || []),
             features: JSON.stringify(featuresToSave || [])
         };
@@ -257,6 +259,17 @@ const AdminProducts = () => {
                         <div>
                             <label className="metric-label">Old Price (TK) — optional</label>
                             <input type="number" className="admin-input" value={currentProduct.old_price || ''} onChange={e => setCurrentProduct({...currentProduct, old_price: Number(e.target.value) || null})} />
+                        </div>
+                    </div>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                        <div>
+                            <label className="metric-label">Stock Level</label>
+                            <input type="number" className="admin-input" value={currentProduct.stock || 0} onChange={e => setCurrentProduct({...currentProduct, stock: e.target.value})} min="0" required />
+                        </div>
+                        <div>
+                            <label className="metric-label">Identity Badge</label>
+                            <input type="text" className="admin-input" value={currentProduct.badge || ''} onChange={e => setCurrentProduct({...currentProduct, badge: e.target.value})} placeholder="e.g. NEW, SALE" />
                         </div>
                     </div>
 
@@ -332,10 +345,6 @@ const AdminProducts = () => {
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px' }}>
                         <div>
-                            <label className="metric-label">Identity Badge</label>
-                            <input type="text" className="admin-input" value={currentProduct.badge || ''} onChange={e => setCurrentProduct({...currentProduct, badge: e.target.value})} placeholder="e.g. NEW" />
-                        </div>
-                        <div>
                             <label className="metric-label">Status</label>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
                                 <input type="checkbox" checked={currentProduct.is_active} onChange={e => setCurrentProduct({...currentProduct, is_active: e.target.checked})} />
@@ -353,11 +362,36 @@ const AdminProducts = () => {
         );
     }
 
+    const totalProducts = products.length;
+    const activeProducts = products.filter(p => p.is_active).length;
+    const outOfStock = products.filter(p => (p.stock || 0) === 0).length;
+    const lowStock = products.filter(p => (p.stock || 0) > 0 && (p.stock || 0) <= 5).length;
+
     return (
         <div className="admin-products animate-fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                <h1 className="admin-page-title">PRODUCT <span style={{ color: 'var(--admin-accent)' }}>INVENTORY</span></h1>
+            <div className="admin-page-header">
+                <div>
+                    <h1 className="admin-page-title">PRODUCT <span>INVENTORY</span></h1>
+                    <p style={{ fontSize: '0.78rem', color: 'var(--admin-text-muted)', marginTop: '4px' }}>
+                        Manage your catalog, stock levels, and product media
+                    </p>
+                </div>
                 <button onClick={handleCreate} className="admin-btn admin-btn-primary">+ NEW ASSET</button>
+            </div>
+
+            {/* ── Quick Stats ───────────────────────────────── */}
+            <div className="orders-stats-grid" style={{ marginBottom: '24px' }}>
+                {[
+                    { label: 'Total Products', value: totalProducts, color: 'var(--admin-accent)' },
+                    { label: 'Active', value: activeProducts, color: 'var(--admin-success)' },
+                    { label: 'Out of Stock', value: outOfStock, color: outOfStock > 0 ? 'var(--admin-danger)' : 'var(--admin-text-muted)' },
+                    { label: 'Low Stock (< 5)', value: lowStock, color: lowStock > 0 ? 'var(--admin-warning)' : 'var(--admin-text-muted)' },
+                ].map((s, i) => (
+                    <div key={i} className="admin-card" style={{ padding: '16px 20px' }}>
+                        <div style={{ fontSize: '0.65rem', color: 'var(--admin-text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>{s.label}</div>
+                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: s.color, fontFamily: "'JetBrains Mono', monospace", lineHeight: 1 }}>{s.value}</div>
+                    </div>
+                ))}
             </div>
 
             <div className="admin-card">
@@ -369,6 +403,7 @@ const AdminProducts = () => {
                                 <th>Name</th>
                                 <th>Category</th>
                                 <th>Price</th>
+                                <th>Stock</th>
                                 <th>Images</th>
                                 <th>Stream Status</th>
                                 <th>Admin Actions</th>
@@ -387,6 +422,14 @@ const AdminProducts = () => {
                                         </span>
                                     </td>
                                     <td style={{ color: 'var(--admin-accent)', fontWeight: 700 }}>৳{Number(product.price).toLocaleString()}</td>
+                                    <td>
+                                        <span className="status-badge" style={{ 
+                                            background: (product.stock || 0) === 0 ? 'rgba(239,68,68,0.1)' : ((product.stock || 0) <= 5 ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)'), 
+                                            color: (product.stock || 0) === 0 ? 'var(--admin-danger)' : ((product.stock || 0) <= 5 ? 'var(--admin-warning)' : 'var(--admin-success)') 
+                                        }}>
+                                            {product.stock || 0} unit{product.stock !== 1 ? 's' : ''}
+                                        </span>
+                                    </td>
                                     <td>
                                         <span className="status-badge" style={{ background: 'rgba(59,130,246,0.1)', color: 'var(--admin-accent)' }}>
                                             {product.images?.length || 1} img

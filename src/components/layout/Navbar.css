@@ -129,8 +129,19 @@
     opacity: 1;
 }
 
+/* On mobile, dropdown is controlled by .open class instead of hover */
 .dropdown:hover .dropdown-content {
     display: block;
+}
+
+@media (hover: none) {
+    /* Touch devices: disable hover-based dropdown, use .open class only */
+    .dropdown:hover .dropdown-content {
+        display: none;
+    }
+    .dropdown.open .dropdown-content {
+        display: block;
+    }
 }
 
 .nav-actions {
@@ -243,8 +254,9 @@
         transition: 0.3s;
         box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
         justify-content: flex-start;
-        padding-top: 50px;
-        gap: 30px;
+        padding-top: 40px;
+        gap: 0;
+        overflow-y: auto;
     }
 
     .nav-links.active {
@@ -252,26 +264,67 @@
     }
 
     .nav-links a {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+        padding: 16px 24px;
+        display: block;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        width: 100%;
+    }
+
+    /* Dropdown in mobile menu: click-toggled via .open class */
+    .dropdown {
+        width: 100%;
+    }
+
+    .kebab-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 16px 24px;
+        font-size: 1.1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
     .dropdown-content {
         position: static;
         box-shadow: none;
-        background-color: transparent;
+        background-color: var(--bg-secondary);
         border: none;
-        margin-top: 10px;
-        text-align: center;
+        border-radius: 0;
+        margin-top: 0;
+        padding: 0;
         display: none;
     }
 
-    .dropdown:hover .dropdown-content {
+    .dropdown.open .dropdown-content {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
-    
+
     .dropdown-content a {
         font-size: 1rem;
+        padding: 14px 24px;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+        width: 100%;
+    }
+
+    /* Hide hover rule on mobile (already disabled by @media hover:none above) */
+    .dropdown:hover .dropdown-content {
+        display: none;
     }
 }
+
+@media (max-width: 480px) {
+    .navbar-container {
+        height: 64px;
+    }
+
+    .nav-links {
+        top: 64px;
+        height: calc(100vh - 64px);
+    }
+
+    .logo-text {
+        font-size: 1.2rem;
+    }
+}

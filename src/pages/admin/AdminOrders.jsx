@@ -213,7 +213,7 @@ const AdminOrders = () => {
             </div>
 
             {/* ── Quick Stats ───────────────────────────────── */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', marginBottom: '24px' }}>
+            <div className="orders-stats-grid">
                 {[
                     { label: 'Total Orders', value: orders.length, color: 'var(--admin-accent)' },
                     { label: 'Pending', value: pendingCount, color: 'var(--admin-warning)' },
@@ -401,16 +401,15 @@ const AdminOrders = () => {
                                         {isExpanded && (
                                             <tr>
                                                 <td colSpan={7} style={{ padding: '0', border: 'none' }}>
-                                                    <div style={{
+                                                    <div className="order-expand-panel" style={{
                                                         background: 'rgba(8, 11, 20, 0.6)',
                                                         borderTop: '1px solid rgba(79,142,247,0.2)',
                                                         borderBottom: '1px solid rgba(79,142,247,0.2)',
-                                                        padding: '20px 24px',
                                                     }}>
                                                         {/* ── Status Timeline (full width) ── */}
                                                         <StatusTimeline currentStatus={order.status} />
 
-                                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
+                                                        <div className="order-detail-grid">
 
                                                             {/* Col 1: Order Items */}
                                                             <div>

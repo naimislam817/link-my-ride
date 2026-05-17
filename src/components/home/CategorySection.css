@@ -108,10 +108,35 @@
     }
 
     .category-card {
-        height: 300px;
+        height: 260px;
     }
 
     .section-header {
         margin-bottom: 25px;
     }
 }
+
+@media (max-width: 600px) {
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .category-card {
+        height: 220px;
+    }
+
+    .category-content {
+        padding: 20px;
+    }
+
+    .category-title {
+        font-size: 1.25rem;
+    }
+}

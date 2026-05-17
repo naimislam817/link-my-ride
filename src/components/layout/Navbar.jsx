@@ -5,12 +5,27 @@ import { useShop } from '../../context/ShopContext';
 
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const { cart, setIsCartOpen } = useShop();
     
     const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
+        setIsDropdownOpen(false);
+    };
+
+    const closeMobileMenu = () => {
+        setIsMobileMenuOpen(false);
+        setIsDropdownOpen(false);
+    };
+
+    const toggleDropdown = (e) => {
+        // On touch devices, toggle the dropdown open state
+        if (window.matchMedia('(hover: none)').matches) {
+            e.stopPropagation();
+            setIsDropdownOpen(!isDropdownOpen);
+        }
     };
     return (
         <nav className="navbar">
@@ -21,17 +36,17 @@ const Navbar = () => {
                 </a>
 
                 <div className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
-                    <div className="dropdown">
-                        <button className="kebab-btn" aria-label="Shop by Category">
+                    <div className={`dropdown ${isDropdownOpen ? 'open' : ''}`}>
+                        <button className="kebab-btn" aria-label="Shop by Category" onClick={toggleDropdown}>
                             &#8942; <span className="dropdown-label">Shop by Category</span>
                         </button>
                         <div className="dropdown-content">
-                            <a href="#catalog?category=communicators">Communicators</a>
-                            <a href="#catalog?category=dashcams">Dashcams</a>
-                            <a href="#catalog?category=accessories">Accessories</a>
+                            <a href="#catalog?category=communicators" onClick={closeMobileMenu}>Communicators</a>
+                            <a href="#catalog?category=dashcams" onClick={closeMobileMenu}>Dashcams</a>
+                            <a href="#catalog?category=accessories" onClick={closeMobileMenu}>Accessories</a>
                         </div>
                     </div>
-                    <a href="#catalog" onClick={() => setIsMobileMenuOpen(false)}>PRODUCTS</a>
+                    <a href="#catalog" onClick={closeMobileMenu}>PRODUCTS</a>
                 </div>
 
                 <div className="nav-actions">

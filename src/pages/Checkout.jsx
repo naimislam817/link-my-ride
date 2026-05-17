@@ -43,7 +43,7 @@ const Checkout = () => {
     if (status === 'success') {
         return (
             <div className="container section-padding animate-fade-in" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div className="success-glass-card" style={{ maxWidth: '600px', width: '100%', textAlign: 'center', padding: '50px 30px', background: 'rgba(15, 17, 26, 0.8)', backdropFilter: 'blur(20px)', borderRadius: 'var(--radius-xl)', border: '1px solid rgba(0, 210, 255, 0.2)', boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)' }}>
+                <div className="success-glass-card" style={{ maxWidth: '600px', width: '100%', textAlign: 'center', background: 'rgba(15, 17, 26, 0.8)', backdropFilter: 'blur(20px)', borderRadius: 'var(--radius-xl)', border: '1px solid rgba(0, 210, 255, 0.2)', boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)' }}>
                     <div style={{ width: '80px', height: '80px', background: 'rgba(0, 210, 255, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '2px solid var(--accent-cyan)' }}>
                         <span style={{ fontSize: '3rem' }}>✔️</span>
                     </div>
@@ -55,11 +55,11 @@ const Checkout = () => {
                         <div style={{ fontSize: '1.8rem', color: 'var(--accent-cyan)', fontWeight: 800, letterSpacing: '2px' }}>{invoiceNumber}</div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                        <a href="/" className="modern-submit-btn" style={{ textDecoration: 'none', width: 'auto', padding: '15px 30px', display: 'inline-block', background: 'linear-gradient(135deg, #1f2235 0%, #151828 100%)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}>
+                    <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap', padding: '0 10px' }}>
+                        <a href="/" className="modern-submit-btn success-action-btn" style={{ textDecoration: 'none', background: 'linear-gradient(135deg, #1f2235 0%, #151828 100%)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}>
                             <span className="btn-content">🏠 BACK TO HOME</span>
                         </a>
-                        <a href="#catalog" className="modern-submit-btn" style={{ textDecoration: 'none', width: 'auto', padding: '15px 30px', display: 'inline-block' }}>
+                        <a href="#catalog" className="modern-submit-btn success-action-btn" style={{ textDecoration: 'none' }}>
                             <span className="btn-content">🛒 CONTINUE SHOPPING</span>
                         </a>
                     </div>
@@ -169,6 +169,12 @@ const Checkout = () => {
                 }
                 .success-glass-card {
                     animation: popupSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                    padding: 50px 40px;
+                }
+                .success-action-btn {
+                    display: inline-flex;
+                    width: auto;
+                    padding: 15px 28px;
                 }
                 @keyframes popupSlideIn {
                     0% { transform: translateY(30px) scale(0.95); opacity: 0; }
@@ -178,6 +184,9 @@ const Checkout = () => {
                     .checkout-grid {
                         grid-template-columns: 1fr;
                         gap: 40px;
+                    }
+                    .checkout-header {
+                        margin-bottom: 35px;
                     }
                 }
                 .section-subtitle {
@@ -332,6 +341,50 @@ const Checkout = () => {
                     text-align: center;
                     margin-top: 15px;
                     font-size: 0.9rem;
+                }
+                @media (max-width: 600px) {
+                    .checkout-header {
+                        margin-bottom: 24px;
+                    }
+                    .section-subtitle {
+                        font-size: 1.1rem;
+                        margin-bottom: 18px;
+                    }
+                    .summary-glass-card {
+                        padding: 24px 18px;
+                    }
+                    .modern-input {
+                        padding: 14px 16px;
+                        font-size: 0.95rem;
+                    }
+                    .btn-content {
+                        font-size: 1rem;
+                    }
+                    .modern-submit-btn {
+                        padding: 16px;
+                    }
+                    .total-value {
+                        font-size: 1.4rem;
+                    }
+                    .success-glass-card {
+                        padding: 36px 20px;
+                        border-radius: var(--radius-lg);
+                    }
+                    .success-action-btn {
+                        width: 100%;
+                        justify-content: center;
+                    }
+                }
+                @media (max-width: 390px) {
+                    .summary-glass-card {
+                        padding: 18px 14px;
+                    }
+                    .modern-input {
+                        padding: 12px 14px;
+                    }
+                    .success-glass-card {
+                        padding: 28px 16px;
+                    }
                 }
             `}</style>
         </div>
