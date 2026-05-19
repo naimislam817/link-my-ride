@@ -16,22 +16,33 @@ const Checkout = () => {
         if (cart.length === 0) return;
         
         setStatus('submitting');
+        const invId = Math.floor(10000 + Math.random() * 90000);
+        const invoiceNum = String(invId);
         
         try {
-            const { error } = await supabase.from('orders').insert([{
+            const orderData = {
                 customer_name: formData.name,
                 customer_phone: formData.phone,
                 customer_email: formData.email,
                 customer_address: formData.address,
                 total_amount: total,
                 items: cart,
-                status: 'pending'
-            }]);
+                status: 'pending',
+                invoice_number: invoiceNum
+            };
+
+            let { error } = await supabase.from('orders').insert([orderData]);
             
-            if (error) throw error;
+            if (error && (error.code === 'PGRST204' || String(error.message).includes('invoice_number'))) {
+                // Fallback for when the SQL migration hasn't been run yet
+                const { invoice_number, ...fallbackData } = orderData;
+                const retryResult = await supabase.from('orders').insert([fallbackData]);
+                if (retryResult.error) throw retryResult.error;
+            } else if (error) {
+                throw error;
+            }
             
-            const invId = Math.floor(10000 + Math.random() * 90000);
-            setInvoiceNumber(`LMR-${String(invId).padStart(5, '0')}`);
+            setInvoiceNumber(`LMR-${invoiceNum}`);
             clearCart();
             setStatus('success');
         } catch (err) {
