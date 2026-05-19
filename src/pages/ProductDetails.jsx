@@ -97,7 +97,9 @@ const ProductDetails = () => {
         const loadProduct = () => {
             const hash = window.location.hash;
             if (hash.startsWith('#product/')) {
-                const id = hash.replace('#product/', '');
+                const idSegment = hash.replace('#product/', '');
+                // Robust extraction: Split by slash to get the exact ID segment, ignoring any trailing slashes or numbers
+                const id = idSegment.split('/')[0];
                 const foundProduct = products.find(p => String(p.id) === String(id));
                 
                 if (foundProduct) {
