@@ -461,12 +461,69 @@ const AdminOrders = () => {
                                                             </div>
 
                                                             {/* Col 3: Admin Notes */}
-                                                            <div onClick={e => e.stopPropagation()}>
-                                                                <OrderNoteEditor
-                                                                    orderId={order.id}
-                                                                    initialNote={localNotes[order.id] !== undefined ? localNotes[order.id] : (order.admin_notes || '')}
-                                                                    onSaved={(text) => handleNoteSaved(order.id, text)}
-                                                                />
+                                                            <div onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+                                                                <div>
+                                                                    <OrderNoteEditor
+                                                                        orderId={order.id}
+                                                                        initialNote={localNotes[order.id] !== undefined ? localNotes[order.id] : (order.admin_notes || '')}
+                                                                        onSaved={(text) => handleNoteSaved(order.id, text)}
+                                                                    />
+                                                                </div>
+                                                                
+                                                                {/* Delete Order Action Block */}
+                                                                <div style={{ marginTop: '24px', borderTop: '1px solid rgba(239, 68, 68, 0.15)', paddingTop: '16px' }}>
+                                                                    <div style={{ fontSize: '0.68rem', color: 'var(--admin-warning)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px', fontWeight: 700 }}>
+                                                                        ⚠️ Danger Zone
+                                                                    </div>
+                                                                    <button
+                                                                        className="admin-btn"
+                                                                        style={{
+                                                                            background: 'rgba(239, 68, 68, 0.08)',
+                                                                            color: '#ef4444',
+                                                                            border: '1px solid rgba(239, 68, 68, 0.3)',
+                                                                            padding: '8px 16px',
+                                                                            fontSize: '0.8rem',
+                                                                            fontWeight: '600',
+                                                                            borderRadius: '6px',
+                                                                            cursor: 'pointer',
+                                                                            transition: 'all 0.2s ease',
+                                                                            display: 'flex',
+                                                                            alignItems: 'center',
+                                                                            justifyContent: 'center',
+                                                                            gap: '8px',
+                                                                            width: '100%'
+                                                                        }}
+                                                                        onMouseEnter={e => {
+                                                                            e.currentTarget.style.background = 'rgba(239, 68, 68, 0.16)';
+                                                                            e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+                                                                            e.currentTarget.style.boxShadow = '0 0 12px rgba(239, 68, 68, 0.15)';
+                                                                        }}
+                                                                        onMouseLeave={e => {
+                                                                            e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)';
+                                                                            e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                                                                            e.currentTarget.style.boxShadow = 'none';
+                                                                        }}
+                                                                        onClick={async (e) => {
+                                                                            e.stopPropagation();
+                                                                            if (window.confirm("Are you sure you want to permanently delete order LMR-" + (order.invoice_number || String(order.id).padStart(5, '0')) + "?\nThis action cannot be undone and will remove the order permanently.")) {
+                                                                                try {
+                                                                                    const { error } = await supabase.from('orders').delete().eq('id', order.id);
+                                                                                    if (error) throw error;
+                                                                                    
+                                                                                    // Refetch and collapse expanded row
+                                                                                    fetchOrders();
+                                                                                    setExpandedOrder(null);
+                                                                                    alert("Order successfully deleted.");
+                                                                                } catch (err) {
+                                                                                    console.error("Error deleting order:", err);
+                                                                                    alert("Failed to delete order: " + err.message);
+                                                                                }
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        🗑️ Delete Order
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>

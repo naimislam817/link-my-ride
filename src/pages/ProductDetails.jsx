@@ -24,6 +24,74 @@ const ProductDetails = () => {
 
     const [formData, setFormData] = useState({ name: '', address: '', phone: '' });
 
+    // Review System States
+    const [reviews, setReviews] = useState([]);
+    const [reviewsLoading, setReviewsLoading] = useState(false);
+    const [reviewForm, setReviewForm] = useState({ name: '', rating: 5, comment: '' });
+    const [submittingReview, setSubmittingReview] = useState(false);
+
+    // Fetch reviews from Supabase
+    const fetchReviews = async (productId) => {
+        try {
+            setReviewsLoading(true);
+            const { data, error } = await supabase
+                .from('reviews')
+                .select('*')
+                .eq('product_id', productId)
+                .order('created_at', { ascending: false });
+            if (error) throw error;
+            setReviews(data || []);
+        } catch (err) {
+            console.error("Error fetching reviews:", err);
+        } finally {
+            setReviewsLoading(false);
+        }
+    };
+
+    // Calculate rating details
+    const totalReviews = reviews.length;
+    const averageRating = totalReviews > 0 
+        ? (reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(1)
+        : '0.0';
+
+    const renderStars = (rating) => {
+        const fullStars = Math.round(Number(rating));
+        return '★'.repeat(fullStars) + '☆'.repeat(5 - fullStars);
+    };
+
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        setSubmittingReview(true);
+
+        try {
+            const reviewData = {
+                product_id: product.id,
+                customer_name: reviewForm.name,
+                rating: reviewForm.rating,
+                comment: reviewForm.comment
+            };
+
+            const { error } = await supabase.from('reviews').insert([reviewData]);
+            if (error) throw error;
+
+            setReviewForm({ name: '', rating: 5, comment: '' });
+            await fetchReviews(product.id);
+            alert("Thank you! Your review has been submitted successfully.");
+        } catch (err) {
+            console.error("Review Submit Error:", err);
+            alert("Failed to submit review. Please try again.");
+        } finally {
+            setSubmittingReview(false);
+        }
+    };
+
+    // Fetch reviews when product changes
+    useEffect(() => {
+        if (product?.id) {
+            fetchReviews(product.id);
+        }
+    }, [product?.id]);
+
     useEffect(() => {
         const loadProduct = () => {
             const hash = window.location.hash;
@@ -99,11 +167,12 @@ const ProductDetails = () => {
                 status: 'pending'
             };
 
-            const { error } = await supabase.from('orders').insert([orderData]);
+            const { data, error } = await supabase.from('orders').insert([orderData]).select();
             if (error) throw error;
 
-            const invId = Math.floor(10000 + Math.random() * 90000);
-            setGeneratedInvoice(`LMR-${String(invId).padStart(5, '0')}`);
+            const insertedOrder = data?.[0];
+            const orderId = insertedOrder?.id || Math.floor(10000 + Math.random() * 90000);
+            setGeneratedInvoice(`LMR-${String(orderId).padStart(5, '0')}`);
 
             setShowSuccess(true);
             // setTimeout(() => setShowSuccess(false), 5000); // Do not auto-close so they can see invoice
@@ -203,8 +272,15 @@ const ProductDetails = () => {
                             }) : (product.name || 'Product Details')}
                         </h1>
                         <div className="product-rating">
-                            <span className="stars">★★★★★</span>
-                            <span className="rating-text">4.9 (248 Reviews)</span>
+                            <span className="stars" style={{ color: 'var(--accent-cyan)' }}>
+                                {renderStars(totalReviews > 0 ? averageRating : 5)}
+                            </span>
+                            <span className="rating-text" style={{ cursor: 'pointer' }} onClick={() => {
+                                const el = document.getElementById('reviews-section');
+                                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            }}>
+                                {totalReviews > 0 ? `${averageRating} (${totalReviews} Review${totalReviews !== 1 ? 's' : ''})` : 'No reviews yet'}
+                            </span>
                         </div>
 
 
@@ -216,6 +292,17 @@ const ProductDetails = () => {
                                 </div>
                             ))}
                         </div>
+
+                        {product.description && (
+                            <div className="product-description-section" style={{ marginTop: '30px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '25px' }}>
+                                <h3 style={{ fontSize: '1.2rem', color: '#fff', fontWeight: 700, marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                                    Product Description
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', lineHeight: '1.8', fontSize: '0.95rem', whiteSpace: 'pre-line' }}>
+                                    {product.description}
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -315,6 +402,120 @@ const ProductDetails = () => {
                 </div>
             </div>
 
+            {/* Reviews Section */}
+            <section id="reviews-section" className="product-reviews-section" style={{ marginTop: '80px', paddingTop: '40px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <div className="reviews-grid">
+                    
+                    {/* Left Column: Reviews List */}
+                    <div>
+                        <h3 style={{ fontSize: '1.4rem', color: '#fff', fontWeight: 800, marginBottom: '25px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                            Customer Reviews ({totalReviews})
+                        </h3>
+
+                        {reviewsLoading ? (
+                            <p style={{ color: 'var(--text-secondary)' }}>Loading reviews...</p>
+                        ) : reviews.length === 0 ? (
+                            <div style={{ padding: '30px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.1)', textAlign: 'center' }}>
+                                <p style={{ color: 'var(--text-secondary)', margin: 0 }}>No reviews yet for this product. Be the first to share your thoughts!</p>
+                            </div>
+                        ) : (
+                            <div className="reviews-list">
+                                {reviews.map((rev) => (
+                                    <div key={rev.id} className="review-card">
+                                        <div className="review-card-header">
+                                            <strong className="review-author">{rev.customer_name}</strong>
+                                            <span className="review-stars">
+                                                {'★'.repeat(rev.rating)}{'☆'.repeat(5 - rev.rating)}
+                                            </span>
+                                        </div>
+                                        <p className="review-text">
+                                            {rev.comment}
+                                        </p>
+                                        <div className="review-date">
+                                            {new Date(rev.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Right Column: Write a Review Form */}
+                    <div>
+                        <div className="review-form-card">
+                            <h3 style={{ fontSize: '1.4rem', color: '#fff', fontWeight: 800, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                                Share Your Experience
+                            </h3>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginBottom: '25px' }}>
+                                Your feedback helps other riders choose the best gear.
+                            </p>
+
+                            <form onSubmit={handleReviewSubmit}>
+                                <div className="form-group" style={{ marginBottom: '20px' }}>
+                                    <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 'bold', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Your Name</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="e.g. John Doe" 
+                                        value={reviewForm.name} 
+                                        onChange={e => setReviewForm({ ...reviewForm, name: e.target.value })} 
+                                        required 
+                                        style={{ width: '100%', padding: '12px 16px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                                    />
+                                </div>
+
+                                <div className="form-group" style={{ marginBottom: '20px' }}>
+                                    <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 'bold', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Rating</label>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        {[1, 2, 3, 4, 5].map((stars) => (
+                                            <button
+                                                key={stars}
+                                                type="button"
+                                                onClick={() => setReviewForm({ ...reviewForm, rating: stars })}
+                                                style={{ 
+                                                    background: 'none', 
+                                                    border: 'none', 
+                                                    cursor: 'pointer', 
+                                                    fontSize: '1.8rem', 
+                                                    color: stars <= reviewForm.rating ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.15)',
+                                                    padding: 0,
+                                                    transition: 'transform 0.1s'
+                                                }}
+                                                onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.15)'}
+                                                onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                                            >
+                                                ★
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="form-group" style={{ marginBottom: '25px' }}>
+                                    <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 'bold', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Your Review</label>
+                                    <textarea 
+                                        placeholder="What did you like or dislike? How does it perform?" 
+                                        rows="4" 
+                                        value={reviewForm.comment} 
+                                        onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })} 
+                                        required
+                                        style={{ width: '100%', padding: '12px 16px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none', resize: 'vertical' }}
+                                    ></textarea>
+                                </div>
+
+                                <button 
+                                    type="submit" 
+                                    className="action-btn website-btn" 
+                                    disabled={submittingReview} 
+                                    style={{ width: '100%', background: 'var(--accent-cyan)', color: '#000', fontWeight: 'bold', border: 'none' }}
+                                >
+                                    {submittingReview ? 'SUBMITTING...' : 'SUBMIT REVIEW'}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
             {/* Related Products Section */}
             {relatedProducts.length > 0 && (
                 <section className="related-products-section" style={{ marginTop: '80px' }}>
@@ -412,6 +613,88 @@ const ProductDetails = () => {
                 }
                 .quantity-group {
                     margin-bottom: 20px;
+                }
+                
+                /* Review System Styling */
+                .reviews-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 40px;
+                }
+                .reviews-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                    max-height: 500px;
+                    overflow-y: auto;
+                    padding-right: 10px;
+                }
+                /* Custom elegant scrollbar for reviews list */
+                .reviews-list::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .reviews-list::-webkit-scrollbar-track {
+                    background: rgba(255, 255, 255, 0.02);
+                    border-radius: 3px;
+                }
+                .reviews-list::-webkit-scrollbar-thumb {
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 3px;
+                }
+                .reviews-list::-webkit-scrollbar-thumb:hover {
+                    background: var(--accent-cyan);
+                }
+                .review-card {
+                    padding: 20px;
+                    background: rgba(255, 255, 255, 0.02);
+                    border-radius: 12px;
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+                    transition: all 0.2s ease;
+                }
+                .review-card:hover {
+                    transform: translateY(-2px);
+                    background: rgba(255, 255, 255, 0.03);
+                    border-color: rgba(0, 210, 255, 0.15);
+                }
+                .review-card-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 10px;
+                }
+                .review-author {
+                    color: #fff;
+                    font-size: 1rem;
+                    font-weight: 600;
+                }
+                .review-stars {
+                    color: var(--accent-cyan);
+                    font-size: 0.9rem;
+                    letter-spacing: 2px;
+                }
+                .review-text {
+                    color: var(--text-secondary);
+                    font-size: 0.9rem;
+                    line-height: 1.6;
+                    margin: 0 0 10px 0;
+                }
+                .review-date {
+                    font-size: 0.75rem;
+                    color: rgba(255, 255, 255, 0.35);
+                }
+                .review-form-card {
+                    background: rgba(255, 255, 255, 0.01);
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+                    border-radius: 16px;
+                    padding: 30px;
+                    backdrop-filter: blur(10px);
+                }
+                
+                @media (max-width: 768px) {
+                    .reviews-grid {
+                        grid-template-columns: 1fr !important;
+                        gap: 30px !important;
+                    }
                 }
             `}</style>
         </div>
