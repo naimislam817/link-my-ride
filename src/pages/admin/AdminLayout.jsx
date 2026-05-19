@@ -6,6 +6,7 @@ import AdminSettings from './AdminSettings';
 import AdminOverview from './AdminOverview';
 import AdminGifts from './AdminGifts';
 import AdminOffers from './AdminOffers';
+import AdminReviews from './AdminReviews';
 import { supabase } from '../../lib/supabase';
 import './AdminDashboard.css';
 
@@ -15,6 +16,7 @@ const NAV_ITEMS = [
   { id: 'products',  label: 'Products',    icon: '⬡' },
   { id: 'gifts',     label: 'Gift Items',  icon: '🎁' },
   { id: 'offers',    label: 'Offers',      icon: '🏷️' },
+  { id: 'reviews',   label: 'Reviews',     icon: '★' },
   { id: 'settings',  label: 'Settings',    icon: '⚙' },
 ];
 
@@ -24,6 +26,7 @@ const PAGE_TITLES = {
   products:  'Product Catalog',
   gifts:     'Gift Items',
   offers:    'Current Offers',
+  reviews:   'Review Moderation',
   settings:  'System Settings',
 };
 
@@ -64,6 +67,7 @@ const AdminLayout = () => {
       case 'orders':    return <AdminOrders />;
       case 'gifts':     return <AdminGifts />;
       case 'offers':    return <AdminOffers />;
+      case 'reviews':   return <AdminReviews />;
       case 'settings':  return <AdminSettings />;
       default:          return <AdminOverview />;
     }

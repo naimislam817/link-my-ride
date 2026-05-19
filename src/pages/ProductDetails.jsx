@@ -38,6 +38,7 @@ const ProductDetails = () => {
                 .from('reviews')
                 .select('*')
                 .eq('product_id', productId)
+                .eq('approved', true)
                 .order('created_at', { ascending: false });
             if (error) throw error;
             setReviews(data || []);
@@ -76,7 +77,7 @@ const ProductDetails = () => {
 
             setReviewForm({ name: '', rating: 5, comment: '' });
             await fetchReviews(product.id);
-            alert("Thank you! Your review has been submitted successfully.");
+            alert("Thank you! Your review has been submitted and is pending admin approval.");
         } catch (err) {
             console.error("Review Submit Error:", err);
             alert("Failed to submit review. Please try again.");
