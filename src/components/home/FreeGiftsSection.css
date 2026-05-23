@@ -1,4 +1,59 @@
+/* ── Free Gifts Section ── */
 .free-gifts-section {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    background-color: #E85000;
+    padding: 36px 24px;
+    overflow: hidden;
+}
+
+.section-header-col {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.free-gifts-section .section-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #FFFFFF;
+}
+
+.free-gifts-section .section-title .text-accent {
+    color: #1A1A1A;
+}
+
+/* ── Marquee ── */
+.marquee-container {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.marquee-content {
+    display: flex;
+    gap: 16px;
+    animation: marquee-scroll 22s linear infinite;
+    width: max-content;
+}
+
+.marquee-product {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.marquee-product:hover {
+    transform: scale(1.08);
+}
+
+@keyframes marquee-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
 }

@@ -1,8 +1,10 @@
+/* ── Hero Section — Dark motorsport style ── */
 .hero-slider {
     position: relative;
-    height: 92vh;
+    height: 88vh;
     width: 100%;
     overflow: hidden;
+    background-color: #1A1A1A;
 }
 
 .mySwiper {
@@ -16,8 +18,25 @@
     height: 100%;
     display: flex;
     align-items: center;
-    padding: 120px 24px;
+    padding: 100px 24px;
     z-index: 0;
+    background-color: #1A1A1A;
+}
+
+/* Diagonal stripe texture overlay */
+.hero-slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(255,255,255,0.015) 0px,
+        rgba(255,255,255,0.015) 1px,
+        transparent 1px,
+        transparent 18px
+    );
+    z-index: 1;
+    pointer-events: none;
 }
 
 .hero-bg {
@@ -30,40 +49,37 @@
     background-position: center;
     z-index: 1;
     transition: transform 5s linear;
+    opacity: 0.35;
 }
 
 .swiper-slide-active .hero-bg {
-    transform: scale(1.05);
+    transform: scale(1.04);
 }
 
 .dark-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, rgba(11,31,59,0.85) 40%, rgba(11,31,59,0.3) 100%);
+    inset: 0;
+    background: linear-gradient(90deg, rgba(26,26,26,0.92) 35%, rgba(26,26,26,0.5) 70%, rgba(26,26,26,0.2) 100%);
     z-index: 2;
 }
 
 .light-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, rgba(245,247,250,0.9) 40%, rgba(245,247,250,0.4) 100%);
-    backdrop-filter: blur(4px);
+    inset: 0;
+    background: linear-gradient(90deg, rgba(26,26,26,0.92) 35%, rgba(26,26,26,0.5) 70%, rgba(26,26,26,0.2) 100%);
     z-index: 2;
 }
 
+/* ── Hero Content ── */
 .hero-content {
     position: relative;
     z-index: 3;
-    max-width: 600px;
+    max-width: 620px;
     opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.5s ease 0.5s;
+    transform: translateY(24px);
+    transition: all 0.55s ease 0.45s;
+    border-left: 4px solid #E85000;
+    padding-left: 28px;
 }
 
 .swiper-slide-active .hero-content {
@@ -71,151 +87,148 @@
     transform: translateY(0);
 }
 
+/* ── Pill / Badge ── */
 .hero-pill {
     display: inline-block;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    margin-bottom: 25px;
+    padding: 5px 14px;
+    border-radius: 3px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
     text-transform: uppercase;
 }
 
 .badge-moto {
-    background-color: rgba(0, 136, 255, 0.15);
-    color: #4da6ff;
-    border: 1px solid rgba(0, 136, 255, 0.2);
+    background-color: rgba(232, 80, 0, 0.15);
+    color: #FF6B1A;
+    border: 1px solid rgba(232, 80, 0, 0.3);
 }
 
 .badge-auto {
-    background-color: rgba(11, 87, 208, 0.15);
-    color: #0b57d0;
-    border: 1px solid rgba(11, 87, 208, 0.2);
+    background-color: rgba(232, 80, 0, 0.15);
+    color: #FF6B1A;
+    border: 1px solid rgba(232, 80, 0, 0.3);
 }
 
+/* ── Heading ── */
 .hero-split-title {
-    font-size: 5.5rem;
-    font-weight: 800;
+    font-family: 'Oswald', sans-serif;
+    font-size: 58px;
+    font-weight: 700;
     line-height: 1.05;
-    margin-bottom: 30px;
+    margin-bottom: 22px;
     color: #FFFFFF;
-    letter-spacing: -1.5px;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 .hero-split-title span {
-    color: var(--accent-cyan);
+    color: #E85000;
 }
 
 .hero-split-title.dark-text {
-    color: #111827;
+    color: #FFFFFF;
     text-shadow: none;
 }
 
+/* ── Description ── */
 .hero-split-desc {
-    font-size: 1.4rem;
-    line-height: 1.6;
-    margin-bottom: 45px;
-    color: #e2e8f0;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    margin-bottom: 36px;
+    color: #AAAAAA;
     font-weight: 400;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .hero-split-desc.dark-text {
-    color: #334155;
-    text-shadow: none;
+    color: #AAAAAA;
 }
 
+/* ── CTA Button ── */
 .btn-split {
-    padding: 14px 28px;
-    border-radius: 8px;
+    padding: 13px 30px;
+    border-radius: 3px;
+    font-family: 'Oswald', sans-serif;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.3s ease;
     border: none;
+    display: inline-block;
 }
 
 .btn-primary {
-    background: var(--accent-cyan);
-    color: white;
-    box-shadow: 0 8px 25px rgba(45, 156, 219, 0.3);
+    background: #E85000;
+    color: #FFFFFF;
+    box-shadow: 0 6px 20px rgba(232, 80, 0, 0.35);
 }
 
 .btn-primary:hover {
-    background: var(--accent-cyan-hover);
-    transform: translateY(-3px);
-    box-shadow: 0 12px 30px rgba(45, 156, 219, 0.4);
+    background: #FF6B1A;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(232, 80, 0, 0.45);
 }
 
-/* Swiper Pagination Styling */
+/* ── Swiper Pagination ── */
 .swiper-pagination-bullet {
-    width: 12px;
-    height: 12px;
-    background: rgba(255, 255, 255, 0.4);
+    width: 10px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.3);
     opacity: 1;
     transition: all 0.3s ease;
     border: 2px solid transparent;
+    border-radius: 50%;
 }
 
 .swiper-pagination-bullet-active {
-    background: #ffffff;
+    background: #E85000;
     transform: scale(1.3);
-    border-color: rgba(255, 255, 255, 0.8);
+    border-color: rgba(232, 80, 0, 0.5);
 }
 
+/* ── Responsive ── */
 @media (max-width: 992px) {
     .hero-slide {
         padding: 80px 5%;
-        min-height: 60vh;
     }
-
     .hero-split-title {
-        font-size: 3.8rem;
+        font-size: 44px;
     }
 }
 
 @media (max-width: 600px) {
     .hero-slider {
-        height: 70vh;
+        height: 72vh;
     }
-
     .hero-slide {
         padding: 48px 16px;
-        min-height: 50vh;
     }
-
-    .hero-split-title {
-        font-size: 2.2rem;
-        margin-bottom: 16px;
-        letter-spacing: -0.5px;
-    }
-
-    .hero-split-desc {
-        font-size: 1rem;
-        margin-bottom: 24px;
-        line-height: 1.5;
-    }
-
-    .hero-pill {
-        font-size: 0.7rem;
-        padding: 5px 12px;
-        margin-bottom: 18px;
-    }
-
-    .btn-split {
-        padding: 12px 24px;
-        font-size: 0.95rem;
-        width: 100%;
-        max-width: 280px;
-    }
-    
     .hero-content {
+        padding-left: 18px;
+        border-left-width: 3px;
         max-width: 100%;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    }
+    .hero-split-title {
+        font-size: 30px;
+        margin-bottom: 14px;
+        letter-spacing: 1px;
+    }
+    .hero-split-desc {
+        font-size: 13px;
+        margin-bottom: 22px;
+    }
+    .hero-pill {
+        font-size: 0.65rem;
+        padding: 4px 10px;
+        margin-bottom: 14px;
+    }
+    .btn-split {
+        padding: 11px 22px;
+        font-size: 0.88rem;
     }
 }

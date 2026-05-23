@@ -38,7 +38,7 @@ const Footer = () => {
 
                         <li>
                             <span>📞</span>
-                            <a href="https://wa.me/8801622864377" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', textDecoration: 'none', transition: 'color 0.3s ease' }} onMouseOver={(e) => e.target.style.color = 'var(--accent-cyan)'} onMouseOut={(e) => e.target.style.color = 'var(--text-secondary)'}>+880 1622-864377 (WhatsApp)</a>
+                            <a href="https://wa.me/8801622864377" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', textDecoration: 'none', transition: 'color 0.3s ease' }} onMouseOver={(e) => e.target.style.color = 'var(--accent-orange)'} onMouseOut={(e) => e.target.style.color = 'var(--text-secondary)'}>+880 1622-864377 (WhatsApp)</a>
                         </li>
                         <li>
                             <span>✉️</span>

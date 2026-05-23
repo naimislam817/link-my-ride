@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Navbar.css';
-import logoImg from '../../assets/logo.jpg';
 import { useShop } from '../../context/ShopContext';
 
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const { cart, setIsCartOpen } = useShop();
-    
+
     const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
     const toggleMobileMenu = () => {
@@ -20,53 +19,87 @@ const Navbar = () => {
         setIsDropdownOpen(false);
     };
 
-    const toggleDropdown = (e) => {
-        // On touch devices, toggle the dropdown open state
-        if (window.matchMedia('(hover: none)').matches) {
-            e.stopPropagation();
-            setIsDropdownOpen(!isDropdownOpen);
-        }
+    const [currentHash, setCurrentHash] = useState(window.location.hash);
+    useEffect(() => {
+        const handleHash = () => setCurrentHash(window.location.hash);
+        window.addEventListener('hashchange', handleHash);
+        return () => window.removeEventListener('hashchange', handleHash);
+    }, []);
+
+    const isCategoryActive = (catId) => {
+        return currentHash.includes(`?category=${catId}`);
     };
+
     return (
-        <nav className="navbar">
-            <div className="container navbar-container">
-                <a href="/" className="logo">
-                    <img src={logoImg} alt="LinkMyRide Logo" className="brand-logo-img" style={{ height: '40px', objectFit: 'contain' }} />
-                    <span className="text-accent" style={{ fontWeight: 'bold', marginLeft: '10px' }}>Link My Ride</span>
+        <header className="navbar-dark">
+            <div className="container navbar-dark-container">
+                {/* Logo Section */}
+                <a href="/" className="logo-dark" onClick={closeMobileMenu}>
+                    LINK MY RIDE
                 </a>
 
-                <div className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
-                    <div className={`dropdown ${isDropdownOpen ? 'open' : ''}`}>
-                        <button className="kebab-btn" aria-label="Shop by Category" onClick={toggleDropdown}>
-                            &#8942; <span className="dropdown-label">Shop by Category</span>
+                {/* Left/Middle Navigation Links */}
+                <div className={`nav-dark-links ${isMobileMenuOpen ? 'active' : ''}`}>
+                    <a 
+                        href="#catalog?category=communicators" 
+                        className={isCategoryActive('communicators') ? 'active-link' : ''}
+                        onClick={closeMobileMenu}
+                    >
+                        MOTO BLUETOOTH
+                    </a>
+                    <a 
+                        href="#catalog?category=dashcams" 
+                        className={isCategoryActive('dashcams') ? 'active-link' : ''}
+                        onClick={closeMobileMenu}
+                    >
+                        DASHCAMS
+                    </a>
+                    <a 
+                        href="#catalog?category=accessories" 
+                        className={isCategoryActive('accessories') ? 'active-link' : ''}
+                        onClick={closeMobileMenu}
+                    >
+                        HELMETS
+                    </a>
+
+                    {/* Shop by Category Dropdown */}
+                    <div className="nav-dropdown" onMouseLeave={() => setIsDropdownOpen(false)}>
+                        <button 
+                            className="nav-dropdown-btn" 
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        >
+                            SHOP BY CATEGORY <span className="dropdown-arrow">▼</span>
                         </button>
-                        <div className="dropdown-content">
-                            <a href="#catalog?category=communicators" onClick={closeMobileMenu}>Communicators</a>
-                            <a href="#catalog?category=dashcams" onClick={closeMobileMenu}>Dashcams</a>
-                            <a href="#catalog?category=accessories" onClick={closeMobileMenu}>Accessories</a>
+                        <div className={`nav-dropdown-content ${isDropdownOpen ? 'show' : ''}`}>
+                            <a href="#catalog?category=communicators" onClick={closeMobileMenu}>Motorcycle Bluetooth</a>
+                            <a href="#catalog?category=dashcams" onClick={closeMobileMenu}>Smart Dashcams</a>
+                            <a href="#catalog?category=accessories" onClick={closeMobileMenu}>Safety Tech Gear</a>
+                            <a href="#catalog" onClick={closeMobileMenu}>All Products</a>
                         </div>
                     </div>
-                    <a href="#catalog" onClick={closeMobileMenu}>PRODUCTS</a>
                 </div>
 
-                <div className="nav-actions">
-                    <button className="cart-btn" aria-label="Cart" onClick={() => setIsCartOpen(true)}>
+                {/* Right Actions Block (Cart, Hamburger) */}
+                <div className="nav-dark-actions">
+                    {/* Shopping Cart button trigger */}
+                    <button className="nav-cart-icon" aria-label="Cart" onClick={() => setIsCartOpen(true)}>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="9" cy="21" r="1"></circle>
                             <circle cx="20" cy="21" r="1"></circle>
                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                         </svg>
-                        <span className="cart-badge">{cartCount}</span>
+                        {cartCount > 0 && <span className="cart-badge-dark">{cartCount}</span>}
                     </button>
-                    
-                    <button className={`mobile-menu-btn ${isMobileMenuOpen ? 'active' : ''}`} onClick={toggleMobileMenu} aria-label="Toggle Mobile Menu">
-                        <span className="hamburger-line"></span>
-                        <span className="hamburger-line"></span>
-                        <span className="hamburger-line"></span>
+
+                    {/* Mobile Hamburger menu */}
+                    <button className={`mobile-dark-menu-btn ${isMobileMenuOpen ? 'active' : ''}`} onClick={toggleMobileMenu} aria-label="Toggle Mobile Menu">
+                        <span className="dark-hamburger-line"></span>
+                        <span className="dark-hamburger-line"></span>
+                        <span className="dark-hamburger-line"></span>
                     </button>
                 </div>
             </div>
-        </nav>
+        </header>
     );
 };
 

@@ -93,7 +93,7 @@
 
 .marquee-product:hover {
     background: rgba(255, 255, 255, 0.08);
-    border-color: var(--accent-cyan);
+    border-color: var(--accent-orange);
     transform: scale(1.05);
 }
 

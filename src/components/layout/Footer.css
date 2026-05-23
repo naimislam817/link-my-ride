@@ -1,6 +1,7 @@
+/* ── Footer ── */
 .footer {
-    background-color: #0B1F3B; /* Deep Navy */
-    color: #E5E7EB;
+    background-color: #1A1A1A;
+    color: #888888;
     padding: 60px 24px 30px;
     border-top: none;
     margin-top: 0;
@@ -10,7 +11,7 @@
     display: grid;
     grid-template-columns: 2fr 1fr 1.5fr 1.5fr;
     gap: 40px;
-    margin-bottom: 60px;
+    margin-bottom: 50px;
 }
 
 .footer-col {
@@ -18,139 +19,178 @@
     flex-direction: column;
 }
 
+.footer-brand-name {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
 .brand-desc {
-    margin-top: 20px;
-    color: #E5E7EB;
-    opacity: 0.8;
-    font-size: 0.9rem;
+    margin-top: 12px;
+    color: #888888;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    line-height: 1.7;
     max-width: 300px;
 }
 
 .social-links {
     display: flex;
-    gap: 15px;
-    margin-top: 25px;
+    gap: 10px;
+    margin-top: 22px;
 }
 
 .social-links a {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: var(--bg-tertiary);
+    background-color: rgba(255, 255, 255, 0.08);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.8rem;
     font-weight: bold;
     transition: var(--transition);
-    color: var(--text-primary);
+    color: #AAAAAA;
 }
 
 .social-links a:hover {
-    background-color: var(--accent-cyan);
-    color: var(--bg-primary);
+    background-color: #E85000;
+    color: #FFFFFF;
 }
 
 .footer-heading {
-    font-size: 1.1rem;
-    margin-bottom: 25px;
-    font-weight: 700;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #FFFFFF;
+    margin-bottom: 22px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #E85000;
+    display: inline-block;
 }
 
 .footer-links {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
 .footer-links a,
 .footer-contact span,
 .newsletter-col p {
-    color: #E5E7EB;
-    opacity: 0.8;
-    font-size: 0.9rem;
+    color: #888888;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
     transition: var(--transition);
 }
 
 .footer-links a:hover {
-    color: #2D9CDB;
-    opacity: 1;
+    color: #E85000;
 }
 
 .footer-contact {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
 }
 
 .footer-contact li {
     display: flex;
-    gap: 15px;
+    gap: 12px;
     align-items: flex-start;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    color: #888888;
+}
+
+.footer-contact strong {
+    color: #FFFFFF;
 }
 
 .newsletter-form {
-    margin-top: 20px;
+    margin-top: 16px;
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .newsletter-form input {
-    background-color: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    padding: 12px 15px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 11px 14px;
     border-radius: var(--radius-sm);
-    color: var(--text-primary);
+    color: #FFFFFF;
     flex: 1;
-    font-family: inherit;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
     outline: none;
     transition: border-color 0.3s ease;
 }
 
+.newsletter-form input::placeholder {
+    color: #666666;
+}
+
 .newsletter-form input:focus {
-    border-color: var(--accent-cyan);
+    border-color: #E85000;
 }
 
 .newsletter-form button {
-    background-color: var(--accent-cyan);
-    color: var(--bg-primary);
-    font-weight: 700;
-    padding: 0 20px;
+    background-color: #E85000;
+    color: #FFFFFF;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0 18px;
     border-radius: var(--radius-sm);
     transition: var(--transition);
+    border: none;
+    cursor: pointer;
 }
 
 .newsletter-form button:hover {
-    background-color: var(--accent-cyan-hover);
+    background-color: #FF6B1A;
 }
 
+/* ── Footer Bottom ── */
 .footer-bottom {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 25px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    color: #E5E7EB;
-    opacity: 0.7;
-    font-size: 0.85rem;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: #666666;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
 }
 
 .legal-links {
     display: flex;
-    gap: 25px;
+    gap: 22px;
 }
 
 .legal-links a {
+    color: #666666;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
     transition: var(--transition);
-    color: #E5E7EB;
 }
 
 .legal-links a:hover {
-    color: #2D9CDB;
+    color: #E85000;
 }
 
+/* ── Responsive ── */
 @media (max-width: 992px) {
     .footer-container {
         grid-template-columns: 1fr 1fr;
@@ -161,34 +201,28 @@
     .footer {
         padding: 40px 16px 20px;
     }
-
     .footer-container {
         grid-template-columns: 1fr;
-        gap: 30px;
-        margin-bottom: 40px;
+        gap: 28px;
+        margin-bottom: 36px;
     }
-
     .footer-bottom {
         flex-direction: column;
-        gap: 15px;
+        gap: 14px;
         text-align: center;
     }
-
     .legal-links {
         flex-wrap: wrap;
         justify-content: center;
-        gap: 15px;
+        gap: 14px;
     }
-
     .newsletter-form {
         flex-direction: column;
     }
-
     .newsletter-form button {
         padding: 12px 20px;
         width: 100%;
     }
-
     .brand-desc {
         max-width: 100%;
     }
@@ -198,9 +232,8 @@
     .footer {
         padding: 32px 14px 16px;
     }
-
     .footer-heading {
-        font-size: 1rem;
-        margin-bottom: 18px;
+        font-size: 0.8rem;
+        margin-bottom: 16px;
     }
-}
+}

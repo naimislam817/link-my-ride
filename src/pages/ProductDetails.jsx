@@ -202,25 +202,64 @@ const ProductDetails = () => {
         <div className="product-page container section-padding">
             {showSuccess && (
                 <div className="success-popup animate-fade-in">
-                    <div className="success-popup-content" style={{ padding: '40px', background: 'rgba(15, 17, 26, 0.95)', border: '1px solid rgba(0, 210, 255, 0.3)', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8)', maxWidth: '500px', width: '90%' }}>
-                        <div style={{ width: '70px', height: '70px', background: 'rgba(0, 210, 255, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '2px solid var(--accent-cyan)' }}>
-                            <span className="success-icon" style={{ margin: 0, fontSize: '2.5rem' }}>✔️</span>
+                    <div className="success-popup-content" style={{ 
+                        padding: '40px', 
+                        background: '#FFFFFF', 
+                        border: '3px solid var(--accent-orange)', 
+                        borderRadius: 'var(--radius-lg)',
+                        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)', 
+                        maxWidth: '500px', 
+                        width: '90%',
+                        textAlign: 'center'
+                    }}>
+                        <div style={{ width: '70px', height: '70px', background: 'var(--accent-orange-light)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '2px solid var(--accent-orange)' }}>
+                            <span className="success-icon" style={{ margin: 0, fontSize: '2.5rem', color: 'var(--accent-orange)' }}>✓</span>
                         </div>
-                        <h3 style={{ color: '#fff', fontSize: '1.8rem', fontWeight: 800, marginBottom: '10px' }}>Order Confirmed!</h3>
-                        <p style={{ color: 'var(--text-secondary)' }}>We have received your order for {quantity}x {product.name}.</p>
+                        <h3 style={{ color: 'var(--text-primary)', fontSize: '1.8rem', fontWeight: 800, marginBottom: '10px', textTransform: 'uppercase', fontFamily: 'var(--font-display)' }}>Order Confirmed!</h3>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '15px' }}>We have received your order for {quantity}x {product.name}.</p>
                         
-                        <div style={{ background: 'rgba(0,0,0,0.4)', padding: '15px', borderRadius: '8px', margin: '25px 0', display: 'inline-block' }}>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Invoice Number</div>
-                            <div style={{ fontSize: '1.5rem', color: 'var(--accent-cyan)', fontWeight: 800, letterSpacing: '1px' }}>{generatedInvoice}</div>
+                        <div style={{ background: 'var(--bg-section)', padding: '18px 24px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-default)', margin: '20px 0', display: 'inline-block', width: '100%' }}>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '5px' }}>Invoice Number</div>
+                            <div style={{ fontSize: '1.6rem', color: 'var(--accent-orange)', fontWeight: 800, fontFamily: 'var(--font-display)', letterSpacing: '1px' }}>{generatedInvoice}</div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                            <button onClick={() => setShowSuccess(false)} className="action-btn" style={{ flex: '1 1 120px', background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' }}>CLOSE</button>
-                            <a href="/" className="action-btn" style={{ flex: '1 1 120px', background: 'var(--accent-cyan)', color: '#000', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>HOME</a>
+                        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '20px' }}>
+                            <button onClick={() => setShowSuccess(false)} className="btn" style={{ 
+                                flex: '1 1 120px', 
+                                background: 'transparent', 
+                                color: 'var(--text-primary)', 
+                                border: '2px solid var(--text-primary)',
+                                padding: '12px 20px',
+                                fontWeight: 'bold',
+                                fontFamily: 'var(--font-display)',
+                                textTransform: 'uppercase',
+                                cursor: 'pointer',
+                                transition: 'var(--transition)'
+                            }}
+                            onMouseOver={(e) => { e.target.style.background = 'var(--text-primary)'; e.target.style.color = '#FFFFFF'; }}
+                            onMouseOut={(e) => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-primary)'; }}
+                            >Close</button>
+                            
+                            <a href="/" className="btn" style={{ 
+                                flex: '1 1 120px', 
+                                background: 'var(--accent-orange)', 
+                                color: '#FFFFFF', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center',
+                                padding: '12px 20px',
+                                fontWeight: 'bold',
+                                fontFamily: 'var(--font-display)',
+                                textTransform: 'uppercase',
+                                transition: 'var(--transition)'
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = 'var(--accent-orange-hover)'}
+                            onMouseOut={(e) => e.target.style.backgroundColor = 'var(--accent-orange)'}
+                            >Home</a>
                         </div>
                         
-                        <div style={{ marginTop: '25px', paddingTop: '15px', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                            Need help? Call us at <a href="tel:+8801622864377" style={{ color: 'var(--accent-cyan)', textDecoration: 'none', fontWeight: 'bold' }}>📞 +880 1622 864377</a>
+                        <div style={{ marginTop: '25px', paddingTop: '15px', borderTop: '1px solid var(--border-default)', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                            Need help? Call us at <a href="tel:+8801622864377" style={{ color: 'var(--accent-orange)', textDecoration: 'none', fontWeight: 'bold' }}>📞 +880 1622 864377</a>
                         </div>
                     </div>
                 </div>
@@ -284,7 +323,7 @@ const ProductDetails = () => {
                             }) : (product.name || 'Product Details')}
                         </h1>
                         <div className="product-rating">
-                            <span className="stars" style={{ color: 'var(--accent-cyan)' }}>
+                            <span className="stars" style={{ color: 'var(--accent-orange)' }}>
                                 {renderStars(totalReviews > 0 ? averageRating : 5)}
                             </span>
                             <span className="rating-text" style={{ cursor: 'pointer' }} onClick={() => {
@@ -395,7 +434,7 @@ const ProductDetails = () => {
                                 <span>💬</span> ORDER ON WHATSAPP
                             </button>
                             <div style={{ display: 'flex', gap: '10px' }}>
-                                <button type="button" className="action-btn cart-add-btn" onClick={() => addToCart(product, quantity)} style={{ flex: 1, background: 'var(--accent-cyan)', color: '#000', fontWeight: 'bold' }}>
+                                <button type="button" className="action-btn cart-add-btn" onClick={() => addToCart(product, quantity)} style={{ flex: 1, background: 'var(--accent-orange)', color: '#FFFFFF', fontWeight: 'bold' }}>
                                     <span>🛒</span> ADD TO CART
                                 </button>
                                 <button type="submit" className="action-btn website-btn" disabled={isSubmitting} style={{ flex: 1 }}>
@@ -415,19 +454,19 @@ const ProductDetails = () => {
             </div>
 
             {/* Reviews Section */}
-            <section id="reviews-section" className="product-reviews-section" style={{ marginTop: '80px', paddingTop: '40px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+            <section id="reviews-section" className="product-reviews-section" style={{ marginTop: '80px', paddingTop: '40px', borderTop: '1px solid var(--border-default)' }}>
                 <div className="reviews-grid">
                     
                     {/* Left Column: Reviews List */}
                     <div>
-                        <h3 style={{ fontSize: '1.4rem', color: '#fff', fontWeight: 800, marginBottom: '25px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                        <h3 style={{ fontSize: '1.4rem', color: 'var(--text-primary)', fontWeight: 800, marginBottom: '25px', textTransform: 'uppercase', letterSpacing: '1px', fontFamily: 'var(--font-display)' }}>
                             Customer Reviews ({totalReviews})
                         </h3>
 
                         {reviewsLoading ? (
                             <p style={{ color: 'var(--text-secondary)' }}>Loading reviews...</p>
                         ) : reviews.length === 0 ? (
-                            <div style={{ padding: '30px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.1)', textAlign: 'center' }}>
+                            <div style={{ padding: '30px', background: 'var(--bg-section)', borderRadius: 'var(--radius-md)', border: '1px dashed var(--border-default)', textAlign: 'center' }}>
                                 <p style={{ color: 'var(--text-secondary)', margin: 0 }}>No reviews yet for this product. Be the first to share your thoughts!</p>
                             </div>
                         ) : (
@@ -455,7 +494,7 @@ const ProductDetails = () => {
                     {/* Right Column: Write a Review Form */}
                     <div>
                         <div className="review-form-card">
-                            <h3 style={{ fontSize: '1.4rem', color: '#fff', fontWeight: 800, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                            <h3 style={{ fontSize: '1.4rem', color: 'var(--text-primary)', fontWeight: 800, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px', fontFamily: 'var(--font-display)' }}>
                                 Share Your Experience
                             </h3>
                             <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginBottom: '25px' }}>
@@ -471,7 +510,7 @@ const ProductDetails = () => {
                                         value={reviewForm.name} 
                                         onChange={e => setReviewForm({ ...reviewForm, name: e.target.value })} 
                                         required 
-                                        style={{ width: '100%', padding: '12px 16px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                                        style={{ width: '100%', padding: '12px 16px', background: '#FFFFFF', border: '1px solid var(--border-default)', borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', outline: 'none', fontFamily: 'var(--font-body)' }}
                                     />
                                 </div>
 
@@ -488,7 +527,7 @@ const ProductDetails = () => {
                                                     border: 'none', 
                                                     cursor: 'pointer', 
                                                     fontSize: '1.8rem', 
-                                                    color: stars <= reviewForm.rating ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.15)',
+                                                    color: stars <= reviewForm.rating ? 'var(--accent-orange)' : 'var(--text-muted)',
                                                     padding: 0,
                                                     transition: 'transform 0.1s'
                                                 }}
@@ -509,7 +548,7 @@ const ProductDetails = () => {
                                         value={reviewForm.comment} 
                                         onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })} 
                                         required
-                                        style={{ width: '100%', padding: '12px 16px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none', resize: 'vertical' }}
+                                        style={{ width: '100%', padding: '12px 16px', background: '#FFFFFF', border: '1px solid var(--border-default)', borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical', fontFamily: 'var(--font-body)' }}
                                     ></textarea>
                                 </div>
 
@@ -517,7 +556,9 @@ const ProductDetails = () => {
                                     type="submit" 
                                     className="action-btn website-btn" 
                                     disabled={submittingReview} 
-                                    style={{ width: '100%', background: 'var(--accent-cyan)', color: '#000', fontWeight: 'bold', border: 'none' }}
+                                    style={{ width: '100%', background: 'var(--accent-orange)', color: '#FFFFFF', fontWeight: 'bold', border: 'none' }}
+                                    onMouseOver={e => e.target.style.backgroundColor = 'var(--accent-orange-hover)'}
+                                    onMouseOut={e => e.target.style.backgroundColor = 'var(--accent-orange)'}
                                 >
                                     {submittingReview ? 'SUBMITTING...' : 'SUBMIT REVIEW'}
                                 </button>
@@ -565,35 +606,17 @@ const ProductDetails = () => {
                 .success-popup {
                     position: fixed;
                     top: 0; left: 0; right: 0; bottom: 0;
-                    background: rgba(11, 15, 25, 0.9);
-                    backdrop-filter: blur(10px);
+                    background: rgba(0, 0, 0, 0.4);
+                    backdrop-filter: blur(5px);
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     z-index: 1000;
                 }
-                .success-popup-content {
-                    background: var(--bg-secondary);
-                    padding: 40px;
-                    border-radius: var(--radius-xl);
-                    border: 1px solid var(--accent-green);
-                    text-align: center;
-                    max-width: 400px;
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-                }
                 .success-icon {
                     font-size: 3rem;
                     display: block;
                     margin-bottom: 20px;
-                }
-                .success-popup-content h3 {
-                    font-size: 1.5rem;
-                    color: var(--accent-green);
-                    margin-bottom: 10px;
-                }
-                .success-popup-content p {
-                    color: var(--text-secondary);
-                    font-size: 0.95rem;
                 }
                 .quantity-selector {
                     display: flex;
@@ -613,8 +636,8 @@ const ProductDetails = () => {
                     transition: var(--transition);
                 }
                 .qty-btn:hover {
-                    background: rgba(0, 210, 255, 0.1);
-                    color: var(--accent-cyan);
+                    background: rgba(232, 80, 0, 0.08);
+                    color: var(--accent-orange);
                 }
                 .qty-display {
                     padding: 0 20px;
@@ -646,27 +669,28 @@ const ProductDetails = () => {
                     width: 6px;
                 }
                 .reviews-list::-webkit-scrollbar-track {
-                    background: rgba(255, 255, 255, 0.02);
+                    background: rgba(0, 0, 0, 0.03);
                     border-radius: 3px;
                 }
                 .reviews-list::-webkit-scrollbar-thumb {
-                    background: rgba(255, 255, 255, 0.1);
+                    background: rgba(0, 0, 0, 0.1);
                     border-radius: 3px;
                 }
                 .reviews-list::-webkit-scrollbar-thumb:hover {
-                    background: var(--accent-cyan);
+                    background: var(--accent-orange);
                 }
                 .review-card {
                     padding: 20px;
-                    background: rgba(255, 255, 255, 0.02);
-                    border-radius: 12px;
-                    border: 1px solid rgba(255, 255, 255, 0.05);
+                    background: var(--bg-section);
+                    border-radius: var(--radius-md);
+                    border: 1px solid var(--border-default);
                     transition: all 0.2s ease;
                 }
                 .review-card:hover {
                     transform: translateY(-2px);
-                    background: rgba(255, 255, 255, 0.03);
-                    border-color: rgba(0, 210, 255, 0.15);
+                    background: #FFFFFF;
+                    border-color: var(--accent-orange);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
                 }
                 .review-card-header {
                     display: flex;
@@ -675,12 +699,12 @@ const ProductDetails = () => {
                     margin-bottom: 10px;
                 }
                 .review-author {
-                    color: #fff;
+                    color: var(--text-primary);
                     font-size: 1rem;
                     font-weight: 600;
                 }
                 .review-stars {
-                    color: var(--accent-cyan);
+                    color: var(--accent-orange);
                     font-size: 0.9rem;
                     letter-spacing: 2px;
                 }
@@ -692,14 +716,14 @@ const ProductDetails = () => {
                 }
                 .review-date {
                     font-size: 0.75rem;
-                    color: rgba(255, 255, 255, 0.35);
+                    color: var(--text-muted);
                 }
                 .review-form-card {
-                    background: rgba(255, 255, 255, 0.01);
-                    border: 1px solid rgba(255, 255, 255, 0.05);
-                    border-radius: 16px;
+                    background: #FFFFFF;
+                    border: 1px solid var(--border-default);
+                    border-radius: var(--radius-lg);
                     padding: 30px;
-                    backdrop-filter: blur(10px);
+                    box-shadow: 0 5px 20px rgba(0,0,0,0.03);
                 }
                 
                 @media (max-width: 768px) {

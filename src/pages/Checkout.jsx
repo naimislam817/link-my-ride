@@ -54,20 +54,20 @@ const Checkout = () => {
     if (status === 'success') {
         return (
             <div className="container section-padding animate-fade-in" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div className="success-glass-card" style={{ maxWidth: '600px', width: '100%', textAlign: 'center', background: 'rgba(15, 17, 26, 0.8)', backdropFilter: 'blur(20px)', borderRadius: 'var(--radius-xl)', border: '1px solid rgba(0, 210, 255, 0.2)', boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)' }}>
-                    <div style={{ width: '80px', height: '80px', background: 'rgba(0, 210, 255, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '2px solid var(--accent-cyan)' }}>
-                        <span style={{ fontSize: '3rem' }}>✔️</span>
+                <div className="success-glass-card">
+                    <div style={{ width: '76px', height: '76px', background: '#FFF3EC', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '2px solid #E85000' }}>
+                        <span style={{ fontSize: '2.8rem' }}>✔️</span>
                     </div>
-                    <h2 style={{ color: '#fff', fontSize: '2rem', marginBottom: '10px', fontWeight: 800 }}>Order Confirmed!</h2>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '30px' }}>Your order has been successfully placed and is being processed.</p>
+                    <h2 style={{ fontFamily: "'Oswald', sans-serif", color: '#1A1A1A', fontSize: '2rem', marginBottom: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px' }}>Order Confirmed!</h2>
+                    <p style={{ fontFamily: "'Open Sans', sans-serif", color: '#555555', fontSize: '1rem', marginBottom: '28px' }}>Your order has been successfully placed and is being processed.</p>
                     
-                    <div style={{ background: 'rgba(0,0,0,0.3)', padding: '20px', borderRadius: 'var(--radius-md)', marginBottom: '35px', display: 'inline-block', textAlign: 'left', minWidth: '250px' }}>
-                        <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Invoice Number</div>
-                        <div style={{ fontSize: '1.8rem', color: 'var(--accent-cyan)', fontWeight: 800, letterSpacing: '2px' }}>{invoiceNumber}</div>
+                    <div style={{ background: '#F4F4F4', padding: '20px', borderRadius: 'var(--radius-sm)', marginBottom: '32px', display: 'inline-block', textAlign: 'left', minWidth: '240px' }}>
+                        <div style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '0.82rem', color: '#999999', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>Invoice Number</div>
+                        <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: '1.8rem', color: '#E85000', fontWeight: 700, letterSpacing: '3px' }}>{invoiceNumber}</div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap', padding: '0 10px' }}>
-                        <a href="/" className="modern-submit-btn success-action-btn" style={{ textDecoration: 'none', background: 'linear-gradient(135deg, #1f2235 0%, #151828 100%)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}>
+                    <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap', padding: '0 10px' }}>
+                        <a href="/" className="modern-submit-btn success-action-btn" style={{ textDecoration: 'none', background: '#1A1A1A', border: '1px solid #1A1A1A' }}>
                             <span className="btn-content">🏠 BACK TO HOME</span>
                         </a>
                         <a href="#catalog" className="modern-submit-btn success-action-btn" style={{ textDecoration: 'none' }}>
@@ -75,8 +75,8 @@ const Checkout = () => {
                         </a>
                     </div>
                     
-                    <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                        Need help? Call us at <a href="tel:+8801622864377" style={{ color: 'var(--accent-cyan)', textDecoration: 'none', fontWeight: 'bold' }}>📞 +880 1622 864377</a>
+                    <div style={{ marginTop: '28px', paddingTop: '18px', borderTop: '1px solid #E0E0E0', fontFamily: "'Open Sans', sans-serif", fontSize: '0.88rem', color: '#555555' }}>
+                        Need help? Call us at <a href="tel:+8801622864377" style={{ color: '#E85000', textDecoration: 'none', fontWeight: 600 }}>📞 +880 1622 864377</a>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@ const Checkout = () => {
             {cart.length === 0 ? (
                 <div className="empty-checkout">
                     <span style={{ fontSize: '3rem', display: 'block', marginBottom: '20px' }}>🛒</span>
-                    <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Your cart is empty.</p>
+                    <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '1.1rem', color: '#555555' }}>Your cart is empty.</p>
                     <a href="#catalog" className="btn btn-primary" style={{ marginTop: '20px' }}>Return to Shop</a>
                 </div>
             ) : (
@@ -167,164 +167,197 @@ const Checkout = () => {
                 .checkout-page {
                     max-width: 1200px;
                     margin: 0 auto;
+                    background: #FFFFFF;
                 }
                 .checkout-header {
                     text-align: center;
-                    margin-bottom: 50px;
+                    margin-bottom: 48px;
                 }
                 .checkout-grid {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
-                    gap: 60px;
+                    gap: 56px;
                     align-items: start;
                 }
                 .success-glass-card {
                     animation: popupSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-                    padding: 50px 40px;
+                    padding: 48px 40px;
+                    background: #FFFFFF;
+                    border: 1px solid #E0E0E0;
+                    border-radius: var(--radius-lg);
+                    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+                    text-align: center;
+                    max-width: 600px;
+                    width: 100%;
                 }
                 .success-action-btn {
                     display: inline-flex;
                     width: auto;
-                    padding: 15px 28px;
+                    padding: 13px 26px;
                 }
                 @keyframes popupSlideIn {
-                    0% { transform: translateY(30px) scale(0.95); opacity: 0; }
+                    0%   { transform: translateY(28px) scale(0.95); opacity: 0; }
                     100% { transform: translateY(0) scale(1); opacity: 1; }
                 }
                 @media (max-width: 900px) {
                     .checkout-grid {
                         grid-template-columns: 1fr;
-                        gap: 40px;
+                        gap: 36px;
                     }
                     .checkout-header {
-                        margin-bottom: 35px;
+                        margin-bottom: 32px;
                     }
                 }
                 .section-subtitle {
-                    font-size: 1.3rem;
-                    font-weight: 700;
-                    margin-bottom: 25px;
-                    color: var(--text-primary);
+                    font-family: 'Oswald', sans-serif;
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    margin-bottom: 22px;
+                    color: #1A1A1A;
                     text-transform: uppercase;
-                    letter-spacing: 1px;
+                    letter-spacing: 2px;
+                    padding-bottom: 10px;
+                    border-bottom: 2px solid #E85000;
+                    display: inline-block;
                 }
                 .checkout-form {
                     display: flex;
                     flex-direction: column;
-                    gap: 20px;
+                    gap: 18px;
                 }
                 .form-group {
                     display: flex;
                     flex-direction: column;
-                    gap: 8px;
+                    gap: 7px;
                 }
                 .form-group label {
-                    font-size: 0.9rem;
-                    color: var(--text-secondary);
-                    font-weight: 500;
+                    font-family: 'Open Sans', sans-serif;
+                    font-size: 0.75rem;
+                    color: #555555;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.8px;
                 }
                 .modern-input {
-                    background: rgba(255, 255, 255, 0.03);
-                    border: 1px solid rgba(255, 255, 255, 0.1);
-                    border-radius: var(--radius-md);
-                    padding: 15px 20px;
-                    color: var(--text-primary);
-                    font-size: 1rem;
+                    background: #FFFFFF;
+                    border: 1px solid #E0E0E0;
+                    border-radius: var(--radius-sm);
+                    padding: 13px 16px;
+                    color: #1A1A1A;
+                    font-family: 'Open Sans', sans-serif;
+                    font-size: 0.92rem;
                     transition: all 0.3s ease;
+                    width: 100%;
                 }
                 .modern-input:focus {
                     outline: none;
-                    border-color: var(--accent-cyan);
-                    background: rgba(0, 210, 255, 0.05);
-                    box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
+                    border-color: #E85000;
+                    box-shadow: 0 0 0 3px rgba(232, 80, 0, 0.08);
                 }
                 .modern-input::placeholder {
-                    color: rgba(255, 255, 255, 0.3);
+                    color: #BBBBBB;
                 }
                 .summary-glass-card {
-                    background: rgba(15, 17, 26, 0.6);
-                    backdrop-filter: blur(20px);
-                    border: 1px solid rgba(255, 255, 255, 0.05);
+                    background: #FFFFFF;
+                    border: 1px solid #E0E0E0;
                     border-radius: var(--radius-lg);
-                    padding: 40px;
-                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                    padding: 36px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+                }
+                .summary-glass-card .section-subtitle {
+                    display: block;
+                    padding-bottom: 10px;
+                    margin-bottom: 22px;
                 }
                 .summary-items {
                     display: flex;
                     flex-direction: column;
-                    gap: 15px;
-                    margin-bottom: 30px;
+                    gap: 14px;
+                    margin-bottom: 26px;
                 }
                 .summary-item {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    padding-bottom: 15px;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                    padding-bottom: 14px;
+                    border-bottom: 1px solid #E0E0E0;
                 }
                 .summary-item-info {
                     display: flex;
                     flex-direction: column;
-                    gap: 5px;
+                    gap: 3px;
                 }
                 .summary-item-name {
+                    font-family: 'Oswald', sans-serif;
                     font-weight: 600;
-                    color: var(--text-primary);
+                    color: #1A1A1A;
+                    font-size: 0.88rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
                 }
                 .summary-item-qty {
-                    font-size: 0.85rem;
-                    color: var(--text-secondary);
+                    font-family: 'Open Sans', sans-serif;
+                    font-size: 0.78rem;
+                    color: #999999;
                 }
                 .summary-item-price {
+                    font-family: 'Oswald', sans-serif;
                     font-weight: 700;
-                    color: var(--accent-cyan);
+                    color: #E85000;
+                    font-size: 1rem;
                 }
                 .summary-total {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    margin-bottom: 30px;
-                    padding-top: 10px;
+                    margin-bottom: 24px;
+                    padding-top: 14px;
+                    border-top: 1px solid #E0E0E0;
                 }
                 .summary-total span:first-child {
-                    font-size: 1.1rem;
+                    font-family: 'Oswald', sans-serif;
+                    font-size: 0.82rem;
                     font-weight: 600;
-                    color: var(--text-secondary);
+                    color: #999999;
+                    text-transform: uppercase;
+                    letter-spacing: 1.5px;
                 }
                 .total-value {
-                    font-size: 1.8rem;
-                    font-weight: 800;
-                    color: var(--accent-cyan);
+                    font-family: 'Oswald', sans-serif;
+                    font-size: 2rem;
+                    font-weight: 700;
+                    color: #E85000;
                 }
                 .modern-submit-btn {
                     width: 100%;
-                    padding: 20px;
-                    border-radius: var(--radius-md);
-                    background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+                    padding: 17px;
+                    border-radius: var(--radius-sm);
+                    background: #E85000;
                     border: none;
                     cursor: pointer;
                     position: relative;
                     overflow: hidden;
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;
-                    box-shadow: 0 10px 25px rgba(0, 210, 255, 0.4);
+                    transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+                    box-shadow: 0 8px 22px rgba(232, 80, 0, 0.28);
                 }
                 .modern-submit-btn::before {
                     content: '';
                     position: absolute;
                     top: 0; left: -100%;
                     width: 100%; height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
                     transition: left 0.5s ease;
                 }
                 .modern-submit-btn:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 0 15px 35px rgba(0, 210, 255, 0.6);
+                    background: #FF6B1A;
+                    transform: translateY(-2px);
+                    box-shadow: 0 12px 30px rgba(232, 80, 0, 0.4);
                 }
                 .modern-submit-btn:hover::before {
                     left: 100%;
                 }
                 .modern-submit-btn:disabled {
-                    background: var(--bg-tertiary);
+                    background: #E0E0E0;
                     cursor: not-allowed;
                     box-shadow: none;
                     transform: none;
@@ -336,50 +369,53 @@ const Checkout = () => {
                     justify-content: center;
                     align-items: center;
                     gap: 10px;
-                    font-size: 1.1rem;
-                    font-weight: 800;
-                    color: #000;
-                    letter-spacing: 1px;
+                    font-family: 'Oswald', sans-serif;
+                    font-size: 1rem;
+                    font-weight: 700;
+                    color: #FFFFFF;
+                    letter-spacing: 2px;
+                    text-transform: uppercase;
                 }
                 .btn-total {
-                    background: rgba(0,0,0,0.2);
-                    padding: 4px 10px;
+                    background: rgba(0,0,0,0.15);
+                    padding: 3px 10px;
                     border-radius: 20px;
-                    font-size: 0.9rem;
+                    font-size: 0.85rem;
                 }
                 .error-msg {
-                    color: var(--accent-red);
+                    color: #E53333;
+                    font-family: 'Open Sans', sans-serif;
                     text-align: center;
-                    margin-top: 15px;
-                    font-size: 0.9rem;
+                    margin-top: 14px;
+                    font-size: 0.88rem;
                 }
                 @media (max-width: 600px) {
                     .checkout-header {
-                        margin-bottom: 24px;
+                        margin-bottom: 22px;
                     }
                     .section-subtitle {
-                        font-size: 1.1rem;
-                        margin-bottom: 18px;
+                        font-size: 0.95rem;
+                        margin-bottom: 16px;
                     }
                     .summary-glass-card {
-                        padding: 24px 18px;
+                        padding: 22px 16px;
                     }
                     .modern-input {
-                        padding: 14px 16px;
-                        font-size: 0.95rem;
+                        padding: 12px 14px;
+                        font-size: 0.88rem;
                     }
                     .btn-content {
-                        font-size: 1rem;
+                        font-size: 0.92rem;
                     }
                     .modern-submit-btn {
-                        padding: 16px;
+                        padding: 15px;
                     }
                     .total-value {
-                        font-size: 1.4rem;
+                        font-size: 1.5rem;
                     }
                     .success-glass-card {
-                        padding: 36px 20px;
-                        border-radius: var(--radius-lg);
+                        padding: 34px 18px;
+                        border-radius: var(--radius-md);
                     }
                     .success-action-btn {
                         width: 100%;
@@ -388,13 +424,13 @@ const Checkout = () => {
                 }
                 @media (max-width: 390px) {
                     .summary-glass-card {
-                        padding: 18px 14px;
+                        padding: 16px 13px;
                     }
                     .modern-input {
-                        padding: 12px 14px;
+                        padding: 11px 13px;
                     }
                     .success-glass-card {
-                        padding: 28px 16px;
+                        padding: 26px 14px;
                     }
                 }
             `}</style>

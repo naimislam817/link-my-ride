@@ -6,25 +6,47 @@ import './Catalog.css';
 const Catalog = () => {
     const { getProductsByCategory, loading, addToCart } = useShop();
     const [category, setCategory] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         const hash = window.location.hash;
         if (hash.includes('?category=')) {
             const cat = hash.split('?category=')[1];
             setCategory(cat);
+            setSearchQuery('');
+        } else if (hash.includes('?search=')) {
+            const query = decodeURIComponent(hash.split('?search=')[1]);
+            setCategory('all');
+            setSearchQuery(query);
         } else {
             setCategory('all');
+            setSearchQuery('');
         }
         window.scrollTo(0, 0);
     }, []);
 
-    const products = getProductsByCategory(category);
+    let products = getProductsByCategory(category);
+    if (searchQuery) {
+        products = products.filter(p => 
+            (p.name && p.name.toLowerCase().includes(searchQuery.toLowerCase())) || 
+            (p.desc && p.desc.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (p.specs && p.specs.some(s => s.toLowerCase().includes(searchQuery.toLowerCase())))
+        );
+    }
 
     return (
         <div className="catalog-page container section-padding animate-fade-in">
             <div className="catalog-header">
-                <h1 className="catalog-title">OUR <span className="text-accent">CATALOG</span></h1>
-                <p className="catalog-desc">Explore our full range of premium rider communication systems and smart accessories.</p>
+                <h1 className="catalog-title">
+                    {searchQuery ? `SEARCH: "${searchQuery.toUpperCase()}"` : <>OUR <span className="text-accent">CATALOG</span></>}
+                </h1>
+                <p className="catalog-desc">
+                    {searchQuery 
+                        ? `Found ${products.length} product${products.length !== 1 ? 's' : ''} matching your query.` 
+                        : "Explore our full range of premium rider communication systems and smart accessories."
+                    }
+                </p>
             </div>
 
             <div className="catalog-filters">

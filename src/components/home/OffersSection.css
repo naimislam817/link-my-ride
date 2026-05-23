@@ -1,4 +1,67 @@
+/* ── Offers Section ── */
 .offers-section {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    background-color: #2D2D2D;
+    border-left: 3px solid #1A1A1A;
+    padding: 36px 24px;
+    overflow: hidden;
+}
+
+.offers-section .section-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #FFFFFF;
+    margin-bottom: 18px;
+}
+
+.offers-section .section-title .text-accent {
+    color: #E85000;
+}
+
+.offers-marquee-container {
+    overflow: hidden;
+    width: 100%;
+}
+
+.offers-marquee-content {
+    display: flex;
+    gap: 16px;
+    animation: marquee-scroll 26s linear infinite;
+    width: max-content;
+}
+
+.offer-card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    min-width: 180px;
+    flex-shrink: 0;
+}
+
+.offer-card img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    margin-bottom: 10px;
+}
+
+.offer-card-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.offer-card-price {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #E85000;
 }

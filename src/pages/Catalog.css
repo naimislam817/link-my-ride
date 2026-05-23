@@ -1,77 +1,91 @@
-/* src/pages/Catalog.css */
+/* ── Catalog Page ── */
 .catalog-page {
     padding-top: 40px;
     padding-bottom: 80px;
     min-height: 70vh;
+    background-color: #F4F4F4;
 }
 
 .catalog-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 36px;
 }
 
 .catalog-title {
-    font-size: 3rem;
-    font-weight: 900;
+    font-family: 'Oswald', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 700;
     margin-bottom: 10px;
     text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #1A1A1A;
 }
 
 .catalog-desc {
-    color: var(--text-secondary);
-    max-width: 600px;
+    font-family: 'Open Sans', sans-serif;
+    color: #555555;
+    max-width: 580px;
     margin: 0 auto;
-    font-size: 1.05rem;
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
+/* ── Filter Buttons ── */
 .catalog-filters {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    margin-bottom: 50px;
+    gap: 10px;
+    margin-bottom: 44px;
     flex-wrap: wrap;
 }
 
 .filter-btn {
-    background-color: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    padding: 10px 24px;
-    border-radius: var(--radius-full);
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-family: 'Oswald', sans-serif;
+    background-color: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    color: #555555;
+    padding: 9px 22px;
+    border-radius: var(--radius-md);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
     cursor: pointer;
     transition: var(--transition);
-    letter-spacing: 1px;
 }
 
 .filter-btn:hover {
-    border-color: rgba(0, 210, 255, 0.5);
-    color: var(--text-primary);
+    border-color: #E85000;
+    color: #E85000;
+    background: #FFF3EC;
 }
 
 .filter-btn.active {
-    background-color: var(--accent-cyan);
-    color: #000;
-    border-color: var(--accent-cyan);
+    background-color: #E85000;
+    color: #FFFFFF;
+    border-color: #E85000;
+    box-shadow: 0 4px 12px rgba(232, 80, 0, 0.25);
 }
 
+/* ── Product Grid ── */
 .catalog-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 30px;
+    gap: 22px;
 }
 
 .no-products {
     grid-column: 1 / -1;
     text-align: center;
     padding: 60px;
-    background-color: var(--bg-secondary);
+    background-color: #FFFFFF;
     border-radius: var(--radius-lg);
-    border: 1px dashed var(--border-color);
-    color: var(--text-secondary);
+    border: 1px dashed #E0E0E0;
+    color: #999999;
+    font-family: 'Open Sans', sans-serif;
 }
 
+/* ── Responsive ── */
 @media (max-width: 1200px) {
     .catalog-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -86,25 +100,22 @@
 
 @media (max-width: 600px) {
     .catalog-page {
-        padding-top: 24px;
-        padding-bottom: 50px;
+        padding-top: 22px;
+        padding-bottom: 48px;
     }
-
     .catalog-header {
-        margin-bottom: 24px;
+        margin-bottom: 22px;
     }
-
     .catalog-title {
-        font-size: 2rem;
+        font-size: 1.9rem;
+        letter-spacing: 2px;
     }
-
     .catalog-desc {
-        font-size: 0.95rem;
+        font-size: 0.92rem;
     }
-
     .catalog-filters {
-        gap: 8px;
-        margin-bottom: 30px;
+        gap: 7px;
+        margin-bottom: 28px;
         justify-content: flex-start;
         overflow-x: auto;
         padding-bottom: 4px;
@@ -112,17 +123,14 @@
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
     }
-
     .catalog-filters::-webkit-scrollbar {
         display: none;
     }
-
     .filter-btn {
         flex-shrink: 0;
-        padding: 8px 18px;
-        font-size: 0.75rem;
+        padding: 8px 16px;
+        font-size: 0.72rem;
     }
-
     .catalog-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
@@ -131,11 +139,10 @@
 
 @media (max-width: 390px) {
     .catalog-title {
-        font-size: 1.7rem;
+        font-size: 1.65rem;
     }
-
     .catalog-grid {
         grid-template-columns: 1fr;
         gap: 14px;
     }
-}
+}
