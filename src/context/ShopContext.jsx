@@ -93,11 +93,79 @@ export const ShopProvider = ({ children }) => {
         .select('*')
         .order('id', { ascending: true });
         
-      if (!error && data && data.length > 0) {
-        setHeroSlides(data);
+      if (error) throw error;
+      if (data) {
+        const mappedData = data.map(slide => ({
+          id: slide.id,
+          bgImg: slide.bg_img,
+          pillText: slide.pill_text,
+          pillClass: slide.pill_class,
+          title: slide.title,
+          desc: slide.desc,
+          buttonText: slide.button_text,
+          buttonClass: slide.button_class,
+          buttonLink: slide.button_link,
+          isDarkText: slide.is_dark_text,
+          overlayClass: slide.overlay_class
+        }));
+        setHeroSlides(mappedData);
       }
     } catch (err) {
-      console.warn("Could not fetch hero slides. Table might not exist yet.");
+      console.warn("Could not fetch hero slides. Table might not exist yet.", err.message);
+    }
+  };
+
+  const saveHeroSlide = async (slide) => {
+    try {
+      const payload = {
+        bg_img: slide.bgImg,
+        pill_text: slide.pillText || null,
+        pill_class: slide.pillClass || null,
+        title: slide.title,
+        desc: slide.desc || null,
+        button_text: slide.buttonText || null,
+        button_class: slide.buttonClass || null,
+        button_link: slide.buttonLink || null,
+        is_dark_text: !!slide.isDarkText,
+        overlay_class: slide.overlayClass || null
+      };
+
+      let error;
+      if (slide.id) {
+        const { error: err } = await supabase
+          .from('hero_slides')
+          .update(payload)
+          .eq('id', slide.id);
+        error = err;
+      } else {
+        const { error: err } = await supabase
+          .from('hero_slides')
+          .insert([payload]);
+        error = err;
+      }
+
+      if (error) throw error;
+      await fetchHeroSlides();
+      return { success: true };
+    } catch (err) {
+      console.error("Failed to save hero slide:", err);
+      return { success: false, error: err.message };
+    }
+  };
+
+  const deleteHeroSlide = async (id) => {
+    try {
+      const { error } = await supabase
+        .from('hero_slides')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchHeroSlides();
+      return { success: true };
+    } catch (err) {
+      console.error("Failed to delete hero slide:", err);
+      return { success: false, error: err.message };
     }
   };
 
@@ -259,6 +327,8 @@ export const ShopProvider = ({ children }) => {
     setIsCartOpen,
     heroSlides,
     refreshHeroSlides: fetchHeroSlides,
+    saveHeroSlide,
+    deleteHeroSlide,
     addToCart,
     removeFromCart,
     updateQuantity,

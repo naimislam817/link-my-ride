@@ -8,9 +8,12 @@ import 'swiper/css/effect-fade';
 import './HeroSection.css';
 import communicatorImg from '../../assets/images/categories/communicator-bg.jpg';
 import dashcamImg from '../../assets/images/hero/hero-image.jpg';
+import { useShop } from '../../context/ShopContext';
 
 const HeroSection = () => {
-    const slides = [
+    const { heroSlides } = useShop();
+
+    const staticSlides = [
         {
             id: 0,
             bgImg: communicatorImg,
@@ -38,6 +41,8 @@ const HeroSection = () => {
             overlayClass: "light-overlay"
         }
     ];
+
+    const slides = heroSlides && heroSlides.length > 0 ? heroSlides : staticSlides;
 
     return (
         <section className="hero-slider">
