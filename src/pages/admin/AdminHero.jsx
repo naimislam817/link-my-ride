@@ -178,7 +178,10 @@ const AdminHero = () => {
                         lineHeight: 1.7,
                         border: '1px solid rgba(255,255,255,0.05)',
                         fontFamily: "'JetBrains Mono', monospace"
-                    }}>{`CREATE TABLE public.hero_slides (
+                    }}>{`-- IMPORTANT: Drops old table to avoid column conflicts
+DROP TABLE IF EXISTS public.hero_slides CASCADE;
+
+CREATE TABLE public.hero_slides (
   id SERIAL PRIMARY KEY,
   bg_img text NOT NULL,
   pill_text text,
