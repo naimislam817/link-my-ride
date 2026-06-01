@@ -200,7 +200,15 @@ CREATE TABLE public.hero_slides (
 INSERT INTO public.hero_slides (bg_img, pill_text, pill_class, title, "desc", button_text, button_class, button_link, is_dark_text, overlay_class)
 VALUES 
 ('https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=1470', 'MOTO SERIES', 'badge-moto', 'Ride Free.<br />Stay<br /><span>Connected.</span>', 'Premium motorcycle communicators designed for crystal-clear audio and seamless mesh networking on the open road.', 'Shop Collection', 'btn-primary', '#catalog?category=communicators', false, 'dark-overlay'),
-('https://images.unsplash.com/photo-1610647752706-3bb12232b3ab?q=80&w=1470', 'AUTO SERIES', 'badge-auto', 'Your Eye<br />On The <span>Road.</span>', 'Capture every ride in crystal-clear 4K — even at night. Cloud-ready for ultimate security.', 'Shop Collection', 'btn-primary', '#catalog?category=dashcams', true, 'light-overlay');`}</pre>
+('https://images.unsplash.com/photo-1610647752706-3bb12232b3ab?q=80&w=1470', 'AUTO SERIES', 'badge-auto', 'Your Eye<br />On The <span>Road.</span>', 'Capture every ride in crystal-clear 4K — even at night. Cloud-ready for ultimate security.', 'Shop Collection', 'btn-primary', '#catalog?category=dashcams', true, 'light-overlay');
+
+-- 4. FIX PERMISSIONS & ROW LEVEL SECURITY
+-- Disable Row Level Security (so standard API calls can read/write without restrictions)
+ALTER TABLE public.hero_slides DISABLE ROW LEVEL SECURITY;
+
+-- Grant standard permissions to API roles (anon and authenticated)
+GRANT ALL ON TABLE public.hero_slides TO postgres, anon, authenticated, service_role;
+GRANT ALL ON SEQUENCE public.hero_slides_id_seq TO postgres, anon, authenticated, service_role;`}</pre>
                     <button className="admin-btn admin-btn-primary" style={{ marginTop: '20px' }} onClick={checkTableAndLoad}>
                         🔄 Verify Table Connection
                     </button>
