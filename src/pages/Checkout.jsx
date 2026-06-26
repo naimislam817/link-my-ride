@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useShop } from '../context/ShopContext';
 import { supabase } from '../lib/supabase';
+import { trackInitiateCheckout, trackPurchase } from '../lib/fbPixel';
 
 const Checkout = () => {
     const { cart, clearCart } = useShop();
@@ -10,6 +11,14 @@ const Checkout = () => {
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     const [invoiceNumber, setInvoiceNumber] = useState('');
+
+    // Fire InitiateCheckout when user lands on checkout page
+    useEffect(() => {
+        if (cart.length > 0) {
+            trackInitiateCheckout(cart, total);
+        }
+    }, []);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -45,6 +54,8 @@ const Checkout = () => {
             setInvoiceNumber(`LMR-${invoiceNum}`);
             clearCart();
             setStatus('success');
+            // Fire Purchase event on successful order
+            trackPurchase(`LMR-${invoiceNum}`, total, cart);
         } catch (err) {
             console.error(err);
             setStatus('error');

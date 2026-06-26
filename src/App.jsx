@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { trackPageView } from './lib/fbPixel';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
@@ -17,7 +18,10 @@ function App() {
   const { products } = useShop();
 
   useEffect(() => {
-    const handleHashChange = () => setCurrentRoute(window.location.hash);
+    const handleHashChange = () => {
+      setCurrentRoute(window.location.hash);
+      trackPageView(); // Fire Meta Pixel PageView on every route change
+    };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);

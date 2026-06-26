@@ -10,6 +10,7 @@ import './ProductDetails.css';
 import { useShop } from '../context/ShopContext';
 import { supabase } from '../lib/supabase';
 import '../components/home/GadgetsSection.css';
+import { trackViewContent, trackAddToCart, trackPurchase } from '../lib/fbPixel';
 
 const ProductDetails = () => {
     const { getProductById, getProductsByCategory, loading, products, addToCart, deliverySettings } = useShop();
@@ -108,6 +109,8 @@ const ProductDetails = () => {
                     const rel = products.filter(p => String(p.id) !== String(id) && p.category === foundProduct.category).slice(0, 4);
                     setRelatedProducts(rel);
                     window.scrollTo(0, 0);
+                    // Fire ViewContent when a product page is loaded
+                    trackViewContent(foundProduct);
                 }
             }
         };
@@ -434,7 +437,7 @@ const ProductDetails = () => {
                                 <span>💬</span> ORDER ON WHATSAPP
                             </button>
                             <div style={{ display: 'flex', gap: '10px' }}>
-                                <button type="button" className="action-btn cart-add-btn" onClick={() => addToCart(product, quantity)} style={{ flex: 1, background: 'var(--accent-orange)', color: '#FFFFFF', fontWeight: 'bold' }}>
+                                <button type="button" className="action-btn cart-add-btn" onClick={() => { addToCart(product, quantity); trackAddToCart(product, quantity); }} style={{ flex: 1, background: 'var(--accent-orange)', color: '#FFFFFF', fontWeight: 'bold' }}>
                                     <span>🛒</span> ADD TO CART
                                 </button>
                                 <button type="submit" className="action-btn website-btn" disabled={isSubmitting} style={{ flex: 1 }}>
