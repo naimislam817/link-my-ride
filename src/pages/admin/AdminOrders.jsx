@@ -449,7 +449,7 @@ const AdminOrders = () => {
                                                                 {[
                                                                     ['Name',       order.customer_name],
                                                                     ['Phone',      order.customer_phone],
-                                                                    ['Address',    order.address || order.delivery_address],
+                                                                    ['Address',    order.customer_address || order.address || order.delivery_address],
                                                                     ['City / Zone',order.city || order.delivery_zone],
                                                                     ['Customer Note', order.notes],
                                                                 ].filter(([, v]) => v).map(([k, v]) => (
