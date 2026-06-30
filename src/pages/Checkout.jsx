@@ -7,6 +7,7 @@ const Checkout = () => {
     const { cart, clearCart } = useShop();
     const [formData, setFormData] = useState({ name: '', phone: '', email: '', address: '' });
     const [status, setStatus] = useState('idle'); // idle, submitting, success, error
+    const [placedOrder, setPlacedOrder] = useState(null);
 
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
@@ -24,6 +25,12 @@ const Checkout = () => {
         e.preventDefault();
         if (cart.length === 0) return;
         
+        // Strict programmatic validation check
+        if (!formData.name.trim() || !formData.phone.trim() || !formData.email.trim() || !formData.address.trim()) {
+            alert("Please fill in all required shipping details.");
+            return;
+        }
+        
         setStatus('submitting');
         const invId = Math.floor(10000 + Math.random() * 90000);
         const invoiceNum = String(invId);
@@ -35,7 +42,7 @@ const Checkout = () => {
                 customer_email: formData.email,
                 customer_address: formData.address,
                 total_amount: total,
-                items: cart,
+                items: [...cart], // clone the cart items before clearing
                 status: 'pending',
                 invoice_number: invoiceNum
             };
@@ -52,6 +59,7 @@ const Checkout = () => {
             }
             
             setInvoiceNumber(`LMR-${invoiceNum}`);
+            setPlacedOrder(orderData);
             clearCart();
             setStatus('success');
             // Fire Purchase event on successful order
@@ -64,31 +72,116 @@ const Checkout = () => {
 
     if (status === 'success') {
         return (
-            <div className="container section-padding animate-fade-in" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div className="success-glass-card">
-                    <div style={{ width: '76px', height: '76px', background: '#FFF3EC', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '2px solid #E85000' }}>
-                        <span style={{ fontSize: '2.8rem' }}>✔️</span>
+            <div className="container section-padding animate-fade-in success-container" style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#F8F9FA', padding: '40px 20px' }}>
+                
+                <div className="success-title-block" style={{ textAlign: 'center', marginBottom: '30px' }}>
+                    <div style={{ width: '76px', height: '76px', background: '#FFF3EC', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '2px solid #E85000', boxShadow: '0 4px 10px rgba(232, 80, 0, 0.15)' }}>
+                        <span style={{ fontSize: '2.5rem', color: '#E85000' }}>✓</span>
                     </div>
-                    <h2 style={{ fontFamily: "'Oswald', sans-serif", color: '#1A1A1A', fontSize: '2rem', marginBottom: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px' }}>Order Confirmed!</h2>
-                    <p style={{ fontFamily: "'Open Sans', sans-serif", color: '#555555', fontSize: '1rem', marginBottom: '28px' }}>Your order has been successfully placed and is being processed.</p>
-                    
-                    <div style={{ background: '#F4F4F4', padding: '20px', borderRadius: 'var(--radius-sm)', marginBottom: '32px', display: 'inline-block', textAlign: 'left', minWidth: '240px' }}>
-                        <div style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '0.82rem', color: '#999999', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>Invoice Number</div>
-                        <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: '1.8rem', color: '#E85000', fontWeight: 700, letterSpacing: '3px' }}>{invoiceNumber}</div>
+                    <h2 style={{ fontFamily: "'Oswald', sans-serif", color: '#1A1A1A', fontSize: '2.2rem', marginBottom: '8px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px' }}>Order Confirmed!</h2>
+                    <p style={{ fontFamily: "'Open Sans', sans-serif", color: '#555555', fontSize: '1rem', maxWidth: '480px', margin: '0 auto' }}>Thank you for your purchase. Your order has been successfully placed and is being processed.</p>
+                </div>
+
+                {/* Printable Invoice Card */}
+                <div className="printable-invoice" style={{
+                    background: '#FFFFFF',
+                    border: '1px solid #E0E0E0',
+                    borderRadius: '12px',
+                    padding: '36px',
+                    maxWidth: '600px',
+                    width: '100%',
+                    margin: '0 auto 30px',
+                    textAlign: 'left',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+                    position: 'relative'
+                }}>
+                    {/* Invoice Header */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #E85000', paddingBottom: '20px', marginBottom: '24px' }}>
+                        <div>
+                            <h2 style={{ color: '#1A1A1A', margin: 0, fontFamily: "'Oswald', sans-serif", fontSize: '1.8rem', fontWeight: 700, letterSpacing: '1px', lineHeight: 1.1 }}>LINK MY RIDE</h2>
+                            <span style={{ fontSize: '0.78rem', color: '#999999', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>Official Sales Invoice</span>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                            <span style={{ fontSize: '0.7rem', color: '#999999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Invoice Number</span>
+                            <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: '1.4rem', color: '#E85000', fontWeight: 700, letterSpacing: '1.5px', marginTop: '2px', marginBottom: '4px' }}>{invoiceNumber}</div>
+                            <div style={{ fontSize: '0.78rem', color: '#555555' }}>Date: <strong>{new Date().toLocaleDateString('en-GB')}</strong></div>
+                        </div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap', padding: '0 10px' }}>
-                        <a href="/" className="modern-submit-btn success-action-btn" style={{ textDecoration: 'none', background: '#1A1A1A', border: '1px solid #1A1A1A' }}>
-                            <span className="btn-content">🏠 BACK TO HOME</span>
-                        </a>
-                        <a href="#catalog" className="modern-submit-btn success-action-btn" style={{ textDecoration: 'none' }}>
-                            <span className="btn-content">🛒 CONTINUE SHOPPING</span>
-                        </a>
+                    {/* Shipping Details */}
+                    <div style={{ marginBottom: '28px', background: '#F8F9FA', padding: '18px 20px', borderRadius: '8px', borderLeft: '4px solid #E85000' }}>
+                        <h4 style={{ fontFamily: "'Oswald', sans-serif", fontSize: '0.9rem', color: '#1A1A1A', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px', fontWeight: 700 }}>Shipping & Delivery Details</h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr', rowGap: '8px', fontSize: '0.88rem', lineHeight: 1.4, color: '#333' }}>
+                            <strong style={{ color: '#666' }}>Name:</strong> <span>{placedOrder?.customer_name}</span>
+                            <strong style={{ color: '#666' }}>Phone:</strong> <span>{placedOrder?.customer_phone}</span>
+                            <strong style={{ color: '#666' }}>Email:</strong> <span>{placedOrder?.customer_email}</span>
+                            <strong style={{ color: '#666' }}>Address:</strong> <span style={{ whiteSpace: 'pre-line' }}>{placedOrder?.customer_address}</span>
+                        </div>
                     </div>
-                    
-                    <div style={{ marginTop: '28px', paddingTop: '18px', borderTop: '1px solid #E0E0E0', fontFamily: "'Open Sans', sans-serif", fontSize: '0.88rem', color: '#555555' }}>
-                        Need help? Call us at <a href="tel:+8801622864377" style={{ color: '#E85000', textDecoration: 'none', fontWeight: 600 }}>📞 +880 1622 864377</a>
+
+                    {/* Order Items Table */}
+                    <div style={{ marginBottom: '28px' }}>
+                        <h4 style={{ fontFamily: "'Oswald', sans-serif", fontSize: '0.9rem', color: '#1A1A1A', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px', fontWeight: 700 }}>Ordered Items</h4>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                            <thead>
+                                <tr style={{ borderBottom: '1px solid #E0E0E0', paddingBottom: '8px' }}>
+                                    <th style={{ textAlign: 'left', paddingBottom: '8px', color: '#999999', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.5px' }}>Item Description</th>
+                                    <th style={{ textAlign: 'center', paddingBottom: '8px', color: '#999999', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.5px', width: '60px' }}>Qty</th>
+                                    <th style={{ textAlign: 'right', paddingBottom: '8px', color: '#999999', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.5px', width: '90px' }}>Price</th>
+                                    <th style={{ textAlign: 'right', paddingBottom: '8px', color: '#999999', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.5px', width: '100px' }}>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {placedOrder?.items?.map((item, idx) => (
+                                    <tr key={idx} style={{ borderBottom: '1px solid #F0F0F0' }}>
+                                        <td style={{ padding: '12px 0', fontWeight: 600, color: '#1A1A1A' }}>{item.name}</td>
+                                        <td style={{ padding: '12px 0', textAlign: 'center', color: '#333', fontFamily: "'JetBrains Mono', monospace" }}>{item.quantity}</td>
+                                        <td style={{ padding: '12px 0', textAlign: 'right', color: '#555', fontFamily: "'JetBrains Mono', monospace" }}>৳{Number(item.price).toLocaleString()}</td>
+                                        <td style={{ padding: '12px 0', textAlign: 'right', fontWeight: 700, color: '#1A1A1A', fontFamily: "'JetBrains Mono', monospace" }}>৳{Number(item.price * item.quantity).toLocaleString()}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
+
+                    {/* Order Total */}
+                    <div style={{ borderTop: '2px double #E0E0E0', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: '1.05rem', fontWeight: 700, color: '#1A1A1A', letterSpacing: '1px' }}>TOTAL PAYABLE</span>
+                        <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: '1.8rem', fontWeight: 700, color: '#E85000' }}>৳{Number(placedOrder?.total_amount).toLocaleString()}</span>
+                    </div>
+
+                    {/* Rip Line Style Bottom Decal */}
+                    <div style={{ 
+                        position: 'absolute', 
+                        bottom: '-5px', 
+                        left: '0', 
+                        right: '0', 
+                        height: '10px', 
+                        backgroundImage: 'radial-gradient(circle, #F8F9FA 5px, transparent 6px)', 
+                        backgroundSize: '16px 16px',
+                        backgroundPosition: 'top center'
+                    }} />
+                </div>
+
+                {/* Actions Button Row */}
+                <div className="success-actions-row" style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap', width: '100%', maxWidth: '600px', padding: '0 10px' }}>
+                    <button 
+                        onClick={() => window.print()} 
+                        className="modern-submit-btn success-action-btn" 
+                        style={{ background: '#E85000', border: '1px solid #E85000', flex: '1 1 180px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                        <span className="btn-content">🖨️ PRINT INVOICE</span>
+                    </button>
+                    <a href="/" className="modern-submit-btn success-action-btn" style={{ textDecoration: 'none', background: '#1A1A1A', border: '1px solid #1A1A1A', flex: '1 1 180px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span className="btn-content">🏠 BACK TO HOME</span>
+                    </a>
+                    <a href="#catalog" className="modern-submit-btn success-action-btn" style={{ textDecoration: 'none', background: '#FFFFFF', border: '1px solid #E0E0E0', color: '#1A1A1A', flex: '1 1 180px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span className="btn-content" style={{ color: '#1A1A1A' }}>🛒 CONTINUE SHOPPING</span>
+                    </a>
+                </div>
+
+                <div className="success-title-block" style={{ marginTop: '30px', fontFamily: "'Open Sans', sans-serif", fontSize: '0.88rem', color: '#777777', textAlign: 'center' }}>
+                    Need help? Call us at <a href="tel:+8801622864377" style={{ color: '#E85000', textDecoration: 'none', fontWeight: 600 }}>📞 +880 1622 864377</a>
                 </div>
             </div>
         );
@@ -111,7 +204,7 @@ const Checkout = () => {
                 <div className="checkout-grid">
                     {/* Left: Form */}
                     <div className="checkout-form-container">
-                        <form onSubmit={handleSubmit} className="checkout-form">
+                        <form onSubmit={handleSubmit} className="checkout-form" id="checkout-form">
                             <h3 className="section-subtitle">Shipping Details</h3>
                             
                             <div className="form-group">
@@ -156,7 +249,8 @@ const Checkout = () => {
                             </div>
 
                             <button 
-                                onClick={handleSubmit} 
+                                type="submit"
+                                form="checkout-form"
                                 className="modern-submit-btn" 
                                 disabled={status === 'submitting'}
                             >
@@ -442,6 +536,44 @@ const Checkout = () => {
                     }
                     .success-glass-card {
                         padding: 26px 14px;
+                    }
+                }
+                @media print {
+                    body {
+                        background: white !important;
+                        color: black !important;
+                    }
+                    /* Hide everything when printing */
+                    body * {
+                        visibility: hidden;
+                    }
+                    /* Only keep printable invoice and its contents visible */
+                    .success-container, .success-container *,
+                    .printable-invoice, .printable-invoice * {
+                        visibility: visible;
+                    }
+                    .success-container {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        padding: 0 !important;
+                        margin: 0 !important;
+                        background: white !important;
+                    }
+                    .printable-invoice {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        max-width: 100% !important;
+                        border: none !important;
+                        box-shadow: none !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
+                    .success-actions-row, .success-title-block {
+                        display: none !important;
                     }
                 }
             `}</style>
