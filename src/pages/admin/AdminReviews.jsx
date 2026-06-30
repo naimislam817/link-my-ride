@@ -6,6 +6,7 @@ const AdminReviews = () => {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'pending', 'approved'
+    const [lightboxImg, setLightboxImg] = useState(null);
 
     const fetchReviews = async () => {
         try {
@@ -84,6 +85,35 @@ const AdminReviews = () => {
 
     return (
         <div className="animate-fade-in">
+            {/* Lightbox */}
+            {lightboxImg && (
+                <div
+                    onClick={() => setLightboxImg(null)}
+                    style={{
+                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                        background: 'rgba(0,0,0,0.92)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        zIndex: 9999, cursor: 'zoom-out', backdropFilter: 'blur(8px)'
+                    }}
+                >
+                    <img
+                        src={lightboxImg}
+                        alt="Review photo full size"
+                        style={{ maxWidth: '88vw', maxHeight: '88vh', objectFit: 'contain', borderRadius: '12px', boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}
+                        onClick={e => e.stopPropagation()}
+                    />
+                    <button
+                        onClick={() => setLightboxImg(null)}
+                        style={{
+                            position: 'absolute', top: '20px', right: '24px',
+                            background: 'rgba(255,255,255,0.15)', border: 'none',
+                            color: '#fff', fontSize: '1.5rem', width: '44px', height: '44px',
+                            borderRadius: '50%', cursor: 'pointer'
+                        }}
+                    >✕</button>
+                </div>
+            )}
+
             {/* Page Header */}
             <div className="admin-page-header">
                 <div>
@@ -136,7 +166,8 @@ const AdminReviews = () => {
                                 <th>Product</th>
                                 <th>Customer Name</th>
                                 <th>Rating</th>
-                                <th style={{ width: '40%' }}>Comment</th>
+                                <th style={{ width: '32%' }}>Comment</th>
+                                <th>Photos</th>
                                 <th>Status</th>
                                 <th>Submitted At</th>
                                 <th>Actions</th>
@@ -172,6 +203,35 @@ const AdminReviews = () => {
                                         {/* Comment */}
                                         <td style={{ color: 'var(--admin-text-muted)', fontSize: '0.82rem', lineHeight: '1.5', whiteSpace: 'pre-line' }}>
                                             {rev.comment}
+                                        </td>
+
+                                        {/* Photos */}
+                                        <td>
+                                            {rev.images && rev.images.length > 0 ? (
+                                                <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', maxWidth: '120px' }}>
+                                                    {rev.images.map((url, idx) => (
+                                                        <img
+                                                            key={idx}
+                                                            src={url}
+                                                            alt={`Photo ${idx + 1}`}
+                                                            onClick={() => setLightboxImg(url)}
+                                                            style={{
+                                                                width: '44px',
+                                                                height: '44px',
+                                                                objectFit: 'cover',
+                                                                borderRadius: '6px',
+                                                                cursor: 'zoom-in',
+                                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                                transition: 'opacity 0.2s'
+                                                            }}
+                                                            onMouseEnter={e => e.currentTarget.style.opacity = '0.75'}
+                                                            onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <span style={{ fontSize: '0.72rem', color: 'var(--admin-text-muted)' }}>—</span>
+                                            )}
                                         </td>
 
                                         {/* Status */}

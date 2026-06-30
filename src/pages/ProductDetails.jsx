@@ -30,6 +30,9 @@ const ProductDetails = () => {
     const [reviewsLoading, setReviewsLoading] = useState(false);
     const [reviewForm, setReviewForm] = useState({ name: '', rating: 5, comment: '' });
     const [submittingReview, setSubmittingReview] = useState(false);
+    const [reviewImages, setReviewImages] = useState([]); // File objects
+    const [reviewImagePreviews, setReviewImagePreviews] = useState([]); // Local blob URLs
+    const [lightboxImg, setLightboxImg] = useState(null); // Full-screen image viewer
 
     // Fetch reviews from Supabase
     const fetchReviews = async (productId) => {
@@ -61,22 +64,52 @@ const ProductDetails = () => {
         return '★'.repeat(fullStars) + '☆'.repeat(5 - fullStars);
     };
 
+    const handleReviewImageChange = (e) => {
+        const files = Array.from(e.target.files).slice(0, 4);
+        setReviewImages(files);
+        const previews = files.map(f => URL.createObjectURL(f));
+        setReviewImagePreviews(previews);
+    };
+
+    const removeReviewImage = (index) => {
+        const newFiles = reviewImages.filter((_, i) => i !== index);
+        const newPreviews = reviewImagePreviews.filter((_, i) => i !== index);
+        setReviewImages(newFiles);
+        setReviewImagePreviews(newPreviews);
+    };
+
     const handleReviewSubmit = async (e) => {
         e.preventDefault();
         setSubmittingReview(true);
 
         try {
+            // Upload images first
+            const imageUrls = [];
+            for (const file of reviewImages) {
+                const ext = file.name.split('.').pop();
+                const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${ext}`;
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('review-images')
+                    .upload(fileName, file, { cacheControl: '3600', upsert: false });
+                if (uploadError) throw uploadError;
+                const { data: { publicUrl } } = supabase.storage.from('review-images').getPublicUrl(uploadData.path);
+                imageUrls.push(publicUrl);
+            }
+
             const reviewData = {
                 product_id: product.id,
                 customer_name: reviewForm.name,
                 rating: reviewForm.rating,
-                comment: reviewForm.comment
+                comment: reviewForm.comment,
+                images: imageUrls
             };
 
             const { error } = await supabase.from('reviews').insert([reviewData]);
             if (error) throw error;
 
             setReviewForm({ name: '', rating: 5, comment: '' });
+            setReviewImages([]);
+            setReviewImagePreviews([]);
             await fetchReviews(product.id);
             alert("Thank you! Your review has been submitted and is pending admin approval.");
         } catch (err) {
@@ -485,6 +518,30 @@ const ProductDetails = () => {
                                         <p className="review-text">
                                             {rev.comment}
                                         </p>
+                                        {/* Review Photos */}
+                                        {rev.images && rev.images.length > 0 && (
+                                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '10px', marginTop: '10px' }}>
+                                                {rev.images.map((url, idx) => (
+                                                    <img
+                                                        key={idx}
+                                                        src={url}
+                                                        alt={`Review photo ${idx + 1}`}
+                                                        onClick={() => setLightboxImg(url)}
+                                                        style={{
+                                                            width: '72px',
+                                                            height: '72px',
+                                                            objectFit: 'cover',
+                                                            borderRadius: '8px',
+                                                            cursor: 'zoom-in',
+                                                            border: '2px solid var(--border-default)',
+                                                            transition: 'transform 0.2s, border-color 0.2s'
+                                                        }}
+                                                        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.07)'; e.currentTarget.style.borderColor = 'var(--accent-orange)'; }}
+                                                        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'var(--border-default)'; }}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
                                         <div className="review-date">
                                             {new Date(rev.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                                         </div>
@@ -543,7 +600,7 @@ const ProductDetails = () => {
                                     </div>
                                 </div>
 
-                                <div className="form-group" style={{ marginBottom: '25px' }}>
+                                <div className="form-group" style={{ marginBottom: '20px' }}>
                                     <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 'bold', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Your Review</label>
                                     <textarea 
                                         placeholder="What did you like or dislike? How does it perform?" 
@@ -555,6 +612,44 @@ const ProductDetails = () => {
                                     ></textarea>
                                 </div>
 
+                                {/* Photo Upload */}
+                                <div className="form-group" style={{ marginBottom: '25px' }}>
+                                    <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 'bold', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Add Photos <span style={{ fontWeight: 400, textTransform: 'none', fontSize: '0.7rem' }}>(optional · max 4)</span></label>
+                                    
+                                    {/* Previews */}
+                                    {reviewImagePreviews.length > 0 && (
+                                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                                            {reviewImagePreviews.map((src, idx) => (
+                                                <div key={idx} style={{ position: 'relative', width: '72px', height: '72px' }}>
+                                                    <img src={src} alt="preview" style={{ width: '72px', height: '72px', objectFit: 'cover', borderRadius: '8px', border: '2px solid var(--accent-orange)' }} />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeReviewImage(idx)}
+                                                        style={{ position: 'absolute', top: '-6px', right: '-6px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}
+                                                    >✕</button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {reviewImages.length < 4 && (
+                                        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', border: '2px dashed var(--border-default)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '0.85rem', transition: 'border-color 0.2s' }}
+                                            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-orange)'}
+                                            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-default)'}
+                                        >
+                                            <span style={{ fontSize: '1.4rem' }}>📷</span>
+                                            <span>Click to add photo{reviewImages.length > 0 ? ` (${reviewImages.length}/4)` : 's'}</span>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                multiple
+                                                onChange={handleReviewImageChange}
+                                                style={{ display: 'none' }}
+                                            />
+                                        </label>
+                                    )}
+                                </div>
+
                                 <button 
                                     type="submit" 
                                     className="action-btn website-btn" 
@@ -563,7 +658,7 @@ const ProductDetails = () => {
                                     onMouseOver={e => e.target.style.backgroundColor = 'var(--accent-orange-hover)'}
                                     onMouseOut={e => e.target.style.backgroundColor = 'var(--accent-orange)'}
                                 >
-                                    {submittingReview ? 'SUBMITTING...' : 'SUBMIT REVIEW'}
+                                    {submittingReview ? '⏳ UPLOADING...' : 'SUBMIT REVIEW'}
                                 </button>
                             </form>
                         </div>
@@ -603,6 +698,37 @@ const ProductDetails = () => {
                         ))}
                     </div>
                 </section>
+            )}
+
+            {/* Lightbox */}
+            {lightboxImg && (
+                <div
+                    onClick={() => setLightboxImg(null)}
+                    style={{
+                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                        background: 'rgba(0,0,0,0.88)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        zIndex: 9999, cursor: 'zoom-out',
+                        backdropFilter: 'blur(6px)'
+                    }}
+                >
+                    <img
+                        src={lightboxImg}
+                        alt="Full size review photo"
+                        style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', borderRadius: '12px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}
+                        onClick={e => e.stopPropagation()}
+                    />
+                    <button
+                        onClick={() => setLightboxImg(null)}
+                        style={{
+                            position: 'absolute', top: '20px', right: '24px',
+                            background: 'rgba(255,255,255,0.15)', border: 'none',
+                            color: '#fff', fontSize: '1.5rem', width: '44px', height: '44px',
+                            borderRadius: '50%', cursor: 'pointer', display: 'flex',
+                            alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)'
+                        }}
+                    >✕</button>
+                </div>
             )}
 
             <style>{`
