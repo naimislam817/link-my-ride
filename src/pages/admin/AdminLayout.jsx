@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AdminProducts from './AdminProducts';
+import AdminCategories from './AdminCategories';
 import AdminOrders from './AdminOrders';
 import AdminLogin from './AdminLogin';
 import AdminSettings from './AdminSettings';
@@ -15,6 +16,7 @@ const NAV_ITEMS = [
   { id: 'overview',  label: 'Overview',    icon: '▦' },
   { id: 'orders',    label: 'Orders',      icon: '◈' },
   { id: 'products',  label: 'Products',    icon: '⬡' },
+  { id: 'categories',label: 'Categories',  icon: '📁' },
   { id: 'gifts',     label: 'Gift Items',  icon: '🎁' },
   { id: 'offers',    label: 'Offers',      icon: '🏷️' },
   { id: 'reviews',   label: 'Reviews',     icon: '★' },
@@ -26,6 +28,7 @@ const PAGE_TITLES = {
   overview:  'System Overview',
   orders:    'Order Management',
   products:  'Product Catalog',
+  categories:'Product Categories',
   gifts:     'Gift Items',
   offers:    'Current Offers',
   reviews:   'Review Moderation',
@@ -67,6 +70,7 @@ const AdminLayout = () => {
     switch (currentView) {
       case 'overview':  return <AdminOverview />;
       case 'products':  return <AdminProducts />;
+      case 'categories':return <AdminCategories />;
       case 'orders':    return <AdminOrders />;
       case 'gifts':     return <AdminGifts />;
       case 'offers':    return <AdminOffers />;

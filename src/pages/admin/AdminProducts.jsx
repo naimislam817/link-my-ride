@@ -9,7 +9,7 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const BUCKET_NAME = 'product-images';
 
 const AdminProducts = () => {
-    const { products, refreshProducts, loading } = useShop();
+    const { products, refreshProducts, loading, categories } = useShop();
     const [isEditing, setIsEditing] = useState(false);
     const [currentProduct, setCurrentProduct] = useState({});
     const [uploadingImages, setUploadingImages] = useState(false);
@@ -244,9 +244,9 @@ const AdminProducts = () => {
                         <div>
                             <label className="metric-label">Category</label>
                             <select className="admin-input" value={currentProduct.category || ''} onChange={e => setCurrentProduct({...currentProduct, category: e.target.value})}>
-                                <option value="communicators">Communicators</option>
-                                <option value="dashcams">Dashcams</option>
-                                <option value="accessories">Accessories</option>
+                                {categories.map(cat => (
+                                    <option key={cat.id} value={cat.id}>{cat.title}</option>
+                                ))}
                             </select>
                         </div>
                     </div>

@@ -5,7 +5,7 @@ import { useShop } from '../../context/ShopContext';
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const { cart, setIsCartOpen } = useShop();
+    const { cart, setIsCartOpen, categories } = useShop();
 
     const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
@@ -71,9 +71,9 @@ const Navbar = () => {
                             SHOP BY CATEGORY <span className="dropdown-arrow">▼</span>
                         </button>
                         <div className={`nav-dropdown-content ${isDropdownOpen ? 'show' : ''}`}>
-                            <a href="#catalog?category=communicators" onClick={closeMobileMenu}>Motorcycle Bluetooth</a>
-                            <a href="#catalog?category=dashcams" onClick={closeMobileMenu}>Smart Dashcams</a>
-                            <a href="#catalog?category=accessories" onClick={closeMobileMenu}>Safety Tech Gear</a>
+                            {categories.map(cat => (
+                                <a key={cat.id} href={`#catalog?category=${cat.id}`} onClick={closeMobileMenu}>{cat.title}</a>
+                            ))}
                             <a href="#catalog" onClick={closeMobileMenu}>All Products</a>
                         </div>
                     </div>

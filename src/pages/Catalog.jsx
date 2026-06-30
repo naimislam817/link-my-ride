@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { categoriesContent } from '../data/siteContent';
 import { useShop } from '../context/ShopContext';
 import './Catalog.css';
 
 const Catalog = () => {
-    const { getProductsByCategory, loading, addToCart } = useShop();
+    const { getProductsByCategory, loading, addToCart, categories } = useShop();
     const [category, setCategory] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -56,7 +55,7 @@ const Catalog = () => {
                 >
                     ALL PRODUCTS
                 </button>
-                {categoriesContent.map(cat => (
+                {categories.map(cat => (
                     <button
                         key={cat.id}
                         className={`filter-btn ${category === cat.id ? 'active' : ''}`}

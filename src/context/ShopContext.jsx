@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { productsList } from '../data/siteContent';
+import { productsList, categoriesContent } from '../data/siteContent';
 
 const ShopContext = createContext();
 
@@ -10,6 +10,8 @@ export const ShopProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [heroSlides, setHeroSlides] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const [deliverySettings, setDeliverySettings] = useState({ inside: 60, outside: 100 });
   const [settingsError, setSettingsError] = useState(null);
 
@@ -83,6 +85,51 @@ export const ShopProvider = ({ children }) => {
     } catch (err) {
       console.error("Error seeding database:", err);
       setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    setLoadingCategories(true);
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('created_at', { ascending: true });
+        
+      if (error) throw error;
+      
+      if (!data || data.length === 0) {
+        console.log("Categories table empty, seeding categories...");
+        await seedCategories();
+        return;
+      }
+      
+      setCategories(data);
+    } catch (err) {
+      console.warn("Could not fetch categories from database:", err.message);
+    } finally {
+      setLoadingCategories(false);
+    }
+  };
+
+  const seedCategories = async () => {
+    try {
+      const { error } = await supabase.from('categories').insert(
+        categoriesContent.map(cat => ({
+          id: cat.id,
+          title: cat.title,
+          subtitle: cat.subtitle,
+          image: cat.id === 'communicators' ? '/images/categories/communicator-bg.jpg' :
+                 cat.id === 'dashcams' ? '/images/categories/dashcam-bg.jpg' :
+                 '/images/categories/accessories-bg.jpg'
+        }))
+      );
+      if (error) throw error;
+      console.log("Categories seeded successfully!");
+      fetchCategories();
+    } catch (err) {
+      console.error("Error seeding categories:", err);
+      setLoadingCategories(false);
     }
   };
 
@@ -209,10 +256,11 @@ export const ShopProvider = ({ children }) => {
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
     fetchHeroSlides();
     fetchDeliverySettings();
 
-    // Subscribe to real-time changes
+    // Subscribe to products real-time changes
     const subscription = supabase
       .channel('public:products')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
@@ -221,8 +269,18 @@ export const ShopProvider = ({ children }) => {
       })
       .subscribe();
 
+    // Subscribe to categories real-time changes
+    const categoriesSubscription = supabase
+      .channel('public:categories')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => {
+        console.log("Categories real-time update received!");
+        fetchCategories();
+      })
+      .subscribe();
+
     return () => {
       subscription.unsubscribe();
+      categoriesSubscription.unsubscribe();
     };
   }, []);
 
@@ -341,7 +399,10 @@ export const ShopProvider = ({ children }) => {
     refreshProducts: fetchProducts,
     deliverySettings,
     updateDeliverySettings,
-    settingsError
+    settingsError,
+    categories,
+    loadingCategories,
+    refreshCategories: fetchCategories
   };
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
